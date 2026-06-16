@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 import { 
@@ -9,7 +9,9 @@ import {
   RotateCcw, 
   Info, 
   Award, 
-  Compass 
+  Compass, 
+  Share2, 
+  Check 
 } from 'lucide-react';
 import { quizQuestions, getLevelResult } from '../data/quizQuestions';
 import type { LevelResult } from '../data/quizQuestions';
@@ -19,18 +21,40 @@ export const QuizPage: React.FC = () => {
   const [selectedAnswers, setSelectedAnswers] = useState<{ [questionId: number]: number }>({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const currentQuestion = quizQuestions[currentIndex];
   const totalQuestions = quizQuestions.length;
   const progressPercent = Math.round(((currentIndex + 1) / totalQuestions) * 100);
 
   const handleSelectOption = (levelScore: number) => {
-    setSelectedAnswers({
-      ...selectedAnswers,
+    setSelectedAnswers((prev) => ({
+      ...prev,
       [currentQuestion.id]: levelScore
-    });
+    }));
     setShowExplanation(true);
   };
+
+  // Keyboard shortcut listener (A, B, C, D)
+  useEffect(() => {
+    if (isCompleted) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toUpperCase();
+      const optionMap: { [key: string]: number } = { A: 0, B: 1, C: 2, D: 3 };
+      if (key in optionMap) {
+        const optionIndex = optionMap[key];
+        if (currentQuestion.options[optionIndex]) {
+          handleSelectOption(currentQuestion.options[optionIndex].levelScore);
+        }
+      } else if (e.key === 'Enter' && selectedAnswers[currentQuestion.id] !== undefined) {
+        handleNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentIndex, isCompleted, selectedAnswers]);
 
   const handleNext = () => {
     setShowExplanation(false);
@@ -68,9 +92,13 @@ export const QuizPage: React.FC = () => {
     setShowExplanation(false);
   };
 
+  const handleCopyResults = () => {
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
+
   // Compute final score
   const totalScore = Object.values(selectedAnswers).reduce((sum, val) => sum + val, 0);
-  // Default to average if somehow skipped
   const finalScore = Object.keys(selectedAnswers).length > 0 ? totalScore : 18;
   const resultData: LevelResult = getLevelResult(finalScore);
 
@@ -98,12 +126,16 @@ export const QuizPage: React.FC = () => {
         {!isCompleted ? (
           /* Active Question Card */
           <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#18243A]/10 shadow-lg space-y-8">
-            {/* Progress Header */}
+            
+            {/* Progress Header & Keyboard Tip */}
             <div className="space-y-3">
               <div className="flex items-center justify-between text-xs text-[#516382] font-semibold">
                 <span className="flex items-center gap-1.5">
                   <Compass className="w-4 h-4 text-[#345BEF]" />
                   <span>Question {currentIndex + 1} of {totalQuestions}</span>
+                </span>
+                <span className="hidden sm:inline text-slate-400 font-normal">
+                  (Tip: Press A, B, C, or D on your keyboard)
                 </span>
                 <span>{progressPercent}% Complete</span>
               </div>
@@ -115,7 +147,7 @@ export const QuizPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Question Text */}
+            {/* Question Text & Real-World Context */}
             <div className="space-y-4">
               <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#18243A] leading-snug">
                 {currentQuestion.question}
@@ -263,7 +295,7 @@ export const QuizPage: React.FC = () => {
               <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <Link
                   to={`/courses/${resultData.recommendedCourseSlug}`}
-                  className="inline-flex items-center justify-center gap-2 bg-[#345BEF] hover:bg-[#2646c7] text-white px-6 py-3.5 rounded-xl font-bold text-sm transition-all"
+                  className="inline-flex items-center justify-center gap-2 bg-[#345BEF] hover:bg-[#2646c7] text-white px-6 py-3.5 rounded-xl font-bold text-sm transition-all shadow-md"
                 >
                   <span>Explore Course Syllabus</span>
                   <ArrowRight className="w-4 h-4" />
@@ -287,13 +319,24 @@ export const QuizPage: React.FC = () => {
                 </span>
               </div>
 
-              <button
-                type="button"
-                onClick={resetQuiz}
-                className="inline-flex items-center gap-1.5 text-[#18243A] hover:text-[#345BEF] font-semibold shrink-0"
-              >
-                <RotateCcw className="w-3.5 h-3.5" /> Retake Quiz
-              </button>
+              <div className="flex items-center gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleCopyResults}
+                  className="inline-flex items-center gap-1.5 text-slate-700 hover:text-[#345BEF] font-semibold"
+                >
+                  {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
+                  <span>{copiedLink ? 'Copied summary!' : 'Share result'}</span>
+                </button>
+                <span>•</span>
+                <button
+                  type="button"
+                  onClick={resetQuiz}
+                  className="inline-flex items-center gap-1.5 text-[#18243A] hover:text-[#345BEF] font-semibold"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Retake Quiz
+                </button>
+              </div>
             </div>
           </div>
         )}

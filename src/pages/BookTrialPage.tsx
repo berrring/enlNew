@@ -7,9 +7,9 @@ import {
   ShieldCheck, 
   Sparkles, 
   ArrowRight, 
-  Info, 
   User, 
-  BookOpen
+  BookOpen, 
+  FileCheck
 } from 'lucide-react';
 import { coursesData } from '../data/courses';
 
@@ -42,7 +42,7 @@ export const BookTrialPage: React.FC = () => {
     course: initialCourse,
     level: 'B1 Intermediate',
     preferredDate: '',
-    preferredTime: '18:30 CET (Evening)',
+    preferredTime: '18:30 CET (Evening Prime)',
     goalsNotes: ''
   });
 
@@ -56,7 +56,6 @@ export const BookTrialPage: React.FC = () => {
   const minDateString = tomorrow.toISOString().split('T')[0];
 
   useEffect(() => {
-    // If course in search params changes
     const c = searchParams.get('course');
     if (c) {
       setFormData((prev) => ({ ...prev, course: c }));
@@ -122,11 +121,10 @@ export const BookTrialPage: React.FC = () => {
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
-      // Trigger festive celebration confetti
       try {
         confetti({
-          particleCount: 80,
-          spread: 70,
+          particleCount: 90,
+          spread: 75,
           origin: { y: 0.6 }
         });
       } catch (err) {
@@ -147,10 +145,10 @@ export const BookTrialPage: React.FC = () => {
               Complimentary 30-Minute Diagnostic
             </span>
             <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#18243A] tracking-tight">
-              Book your private trial lesson.
+              Book your private diagnostic lesson.
             </h1>
             <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
-              Meet 1-on-1 with an Oxford or Cambridge accredited educator to diagnose your pronunciation habits, grammar roadblocks, and create a 90-day trajectory.
+              Meet 1-on-1 with an Oxford or Cambridge accredited educator to evaluate your pronunciation, diagnose syntax hesitation, and create a 90-day trajectory.
             </p>
           </div>
         </div>
@@ -164,17 +162,9 @@ export const BookTrialPage: React.FC = () => {
           <div className="lg:col-span-8">
             <div className="bg-white rounded-3xl p-8 sm:p-12 border border-[#18243A]/10 shadow-sm">
               
-              {/* Demo Mode Notice Banner */}
-              <div className="bg-[#FAF8F5] border border-[#18243A]/10 p-4 rounded-2xl flex items-start gap-3 text-xs text-[#516382] mb-8">
-                <Info className="w-4 h-4 text-[#345BEF] shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-[#18243A]">Portfolio Simulation Notice:</strong> This trial booking wizard is a portfolio demonstration with full form validation and interactive confirmation. It does not reserve live commercial teacher calendars.
-                </div>
-              </div>
-
               {submitted ? (
-                /* Polished Confirmation State */
-                <div className="py-8 text-center space-y-6">
+                /* Polished Confirmation State: Invitation Ticket Style */
+                <div className="py-8 text-center space-y-6 animate-fade-in">
                   <div className="w-16 h-16 rounded-full bg-[#E7F0E8] text-[#2F5238] flex items-center justify-center mx-auto shadow-sm">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
@@ -183,38 +173,44 @@ export const BookTrialPage: React.FC = () => {
                     <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238]">
                       Demo Booking Confirmed
                     </span>
-                    <h3 className="font-serif text-3xl font-bold text-[#18243A]">
+                    <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#18243A]">
                       You're all set, {formData.fullName}!
-                    </h3>
+                    </h2>
                     <p className="text-slate-600 text-base max-w-lg mx-auto leading-relaxed">
                       Your trial lesson request for <strong>{selectedCourseObj?.title || 'FluentBridge Academy'}</strong> has been simulated.
                     </p>
                   </div>
 
-                  {/* Summary Card */}
-                  <div className="bg-[#FAF8F5] rounded-2xl p-6 text-left max-w-md mx-auto border border-[#18243A]/10 space-y-3 text-xs text-slate-700">
-                    <div className="font-bold text-sm text-[#18243A] border-b border-[#18243A]/10 pb-2">
-                      Lesson Confirmation Details (Mock)
+                  {/* Summary Card (Invitation Ticket Style) */}
+                  <div className="bg-[#FAF8F5] rounded-2xl p-6 text-left max-w-md mx-auto border border-[#18243A]/10 space-y-3.5 text-xs text-slate-700 shadow-2xs">
+                    <div className="flex items-center justify-between border-b border-[#18243A]/10 pb-3">
+                      <span className="font-serif font-bold text-sm text-[#18243A] flex items-center gap-1.5">
+                        <FileCheck className="w-4 h-4 text-[#345BEF]" /> Diagnostic Session Ticket
+                      </span>
+                      <span className="text-[10px] uppercase font-bold text-[#2F5238] bg-[#E7F0E8] px-2 py-0.5 rounded-full">
+                        Confirmed (Demo)
+                      </span>
                     </div>
-                    <div className="flex justify-between">
+
+                    <div className="flex justify-between py-1">
                       <span className="text-slate-500">Student:</span>
-                      <span className="font-semibold">{formData.fullName} ({formData.email})</span>
+                      <span className="font-semibold text-[#18243A]">{formData.fullName} ({formData.email})</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between py-1">
                       <span className="text-slate-500">Program:</span>
                       <span className="font-semibold text-[#345BEF]">{selectedCourseObj?.title}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Selected Level:</span>
-                      <span className="font-semibold">{formData.level}</span>
+                    <div className="flex justify-between py-1">
+                      <span className="text-slate-500">Self-Assessed Level:</span>
+                      <span className="font-semibold text-[#18243A]">{formData.level}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Date & Slot:</span>
-                      <span className="font-semibold">{formData.preferredDate} @ {formData.preferredTime}</span>
+                    <div className="flex justify-between py-1">
+                      <span className="text-slate-500">Scheduled Slot:</span>
+                      <span className="font-semibold text-[#18243A]">{formData.preferredDate} @ {formData.preferredTime}</span>
                     </div>
                     {formData.goalsNotes && (
                       <div className="pt-2 border-t border-[#18243A]/5">
-                        <span className="text-slate-500 block mb-1">Your Stated Goals:</span>
+                        <span className="text-slate-500 block mb-1">Your Stated Objectives:</span>
                         <p className="italic text-slate-600">"{formData.goalsNotes}"</p>
                       </div>
                     )}
@@ -244,9 +240,9 @@ export const BookTrialPage: React.FC = () => {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 pb-2 border-b border-[#18243A]/10">
                       <User className="w-4 h-4 text-[#345BEF]" />
-                      <h4 className="font-serif font-bold text-base text-[#18243A]">
-                        1. Personal Details
-                      </h4>
+                      <h3 className="font-serif font-bold text-base text-[#18243A]">
+                        1. Personal Information
+                      </h3>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -292,9 +288,9 @@ export const BookTrialPage: React.FC = () => {
                   <div className="space-y-4 pt-4">
                     <div className="flex items-center gap-2 pb-2 border-b border-[#18243A]/10">
                       <BookOpen className="w-4 h-4 text-[#345BEF]" />
-                      <h4 className="font-serif font-bold text-base text-[#18243A]">
-                        2. Course of Interest & Self-Assessed Level
-                      </h4>
+                      <h3 className="font-serif font-bold text-base text-[#18243A]">
+                        2. Course of Interest & Estimated Proficiency
+                      </h3>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -320,7 +316,7 @@ export const BookTrialPage: React.FC = () => {
                       {/* Level */}
                       <div className="space-y-1.5">
                         <label htmlFor="level" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                          Estimated Proficiency <span className="text-rose-500">*</span>
+                          Estimated Level <span className="text-rose-500">*</span>
                         </label>
                         <select
                           id="level"
@@ -342,9 +338,9 @@ export const BookTrialPage: React.FC = () => {
                   <div className="space-y-4 pt-4">
                     <div className="flex items-center gap-2 pb-2 border-b border-[#18243A]/10">
                       <CalendarIcon className="w-4 h-4 text-[#345BEF]" />
-                      <h4 className="font-serif font-bold text-base text-[#18243A]">
+                      <h3 className="font-serif font-bold text-base text-[#18243A]">
                         3. Schedule Preference (CET / GMT)
-                      </h4>
+                      </h3>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -412,7 +408,7 @@ export const BookTrialPage: React.FC = () => {
                       className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-[#345BEF] hover:bg-[#2646c7] text-white font-bold text-base transition-all shadow-md disabled:opacity-50"
                     >
                       {isSubmitting ? (
-                        <span>Validating & Simulating...</span>
+                        <span>Validating & Confirming...</span>
                       ) : (
                         <>
                           <span>Confirm Demo Trial Booking</span>

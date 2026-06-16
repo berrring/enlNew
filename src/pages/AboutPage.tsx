@@ -15,10 +15,10 @@ export const AboutPage: React.FC = () => {
             <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/20">
               Our Story & Manifesto
             </span>
-            <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#18243A] tracking-tight leading-[1.1]">
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#18243A] tracking-tight leading-[1.08]">
               Built for Europeans who refuse to sound like an automated translation.
             </h1>
-            <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
+            <p className="text-slate-600 text-lg sm:text-xl leading-relaxed font-light">
               FluentBridge was founded on a simple observation: millions of European professionals possess brilliant ideas in their mother tongues, but find themselves muffled, hesitant, or misunderstood in international English.
             </p>
           </div>
@@ -36,11 +36,11 @@ export const AboutPage: React.FC = () => {
               From Oxford lecture halls to European multinational boardrooms.
             </h2>
             <div className="space-y-4 text-slate-700 leading-relaxed text-base">
-              <p>
-                In 2021, an international group of Oxford and Cambridge linguistics fellows noticed a recurring pattern among European graduate students and corporate transferees. These students had spent 8 to 12 years studying English grammar tables in high school, yet they still dreaded speaking unprompted in seminars.
+              <p className="editorial-dropcap">
+                In 2021, an international group of Oxford and Cambridge linguistics fellows noticed a recurring pattern among European graduate students and corporate transferees. These students had spent 8 to 12 years studying English grammar tables in secondary school, yet they still dreaded speaking unprompted in seminars.
               </p>
               <p>
-                The problem wasn't intelligence or grammar knowledge. The problem was <em>embodied communicative practice</em>. Traditional language learning treats English as a mathematical formula of rules to memorize. In reality, spoken fluency is a physical, social, and emotional reflex.
+                The problem was never intelligence or grammar knowledge. The problem was <em>embodied communicative practice</em>. Traditional language learning treats English as a mathematical formula of rules to memorize. In reality, spoken fluency is a physical, social, and emotional reflex.
               </p>
               <p>
                 We built FluentBridge to be a different kind of academy: an intimate online European salon where adults practice high-stakes conversation, learn diplomatic nuance, and receive respectful, scientific phonetic feedback.
@@ -56,7 +56,7 @@ export const AboutPage: React.FC = () => {
                   alt="Academic seminar in a historic European setting"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#18243A]/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#18243A]/90 via-[#18243A]/30 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 text-white space-y-1">
                   <div className="font-serif italic text-base">
                     "When you free someone's voice, you liberate their entire intellect."

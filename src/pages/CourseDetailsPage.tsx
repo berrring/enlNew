@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   Clock, 
@@ -8,7 +8,9 @@ import {
   ArrowRight, 
   Sparkles, 
   ShieldCheck, 
-  ChevronRight
+  ChevronRight, 
+  Check, 
+  ChevronDown 
 } from 'lucide-react';
 import { coursesData } from '../data/courses';
 import { teachersData } from '../data/teachers';
@@ -16,6 +18,7 @@ import { teachersData } from '../data/teachers';
 export const CourseDetailsPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const course = coursesData.find((c) => c.slug === slug);
+  const [activeModule, setActiveModule] = useState<number | null>(0);
 
   // If not found, gracefully redirect to courses catalog
   if (!course) {
@@ -68,7 +71,7 @@ export const CourseDetailsPage: React.FC = () => {
                 )}
               </div>
 
-              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-[#18243A] tracking-tight leading-[1.12]">
+              <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#18243A] tracking-tight leading-[1.08]">
                 {course.title}
               </h1>
 
@@ -104,7 +107,7 @@ export const CourseDetailsPage: React.FC = () => {
                   to={`/book-trial?course=${course.slug}`}
                   className="inline-flex items-center justify-center gap-2 bg-[#345BEF] hover:bg-[#2646c7] text-white px-7 py-3.5 rounded-xl font-semibold text-sm transition-all shadow-md group"
                 >
-                  <span>Request a Free Trial for This Course</span>
+                  <span>Request Free Trial for This Syllabus</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
@@ -112,7 +115,7 @@ export const CourseDetailsPage: React.FC = () => {
                   className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-[#18243A] px-5 py-3.5 rounded-xl font-semibold text-sm transition-all border border-[#18243A]/15"
                 >
                   <Sparkles className="w-4 h-4 text-[#345BEF]" />
-                  <span>Test if this level suits you</span>
+                  <span>Check if this level suits you</span>
                 </Link>
               </div>
             </div>
@@ -127,7 +130,7 @@ export const CourseDetailsPage: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#18243A]/70 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md p-4 rounded-2xl text-xs text-[#18243A] border border-[#18243A]/10 shadow-lg">
-                  <div className="font-bold font-serif text-sm mb-0.5">CEFR Aligned Quality Guarantee</div>
+                  <div className="font-bold font-serif text-sm mb-0.5">European CEFR Guarantee</div>
                   <div className="text-[#516382]">
                     Includes baseline diagnostic, personal error blueprint, and completion certificate.
                   </div>
@@ -141,8 +144,10 @@ export const CourseDetailsPage: React.FC = () => {
       {/* 2. Main Course Content Layout with Sticky Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          
           {/* Main Content Body */}
           <div className="lg:col-span-8 space-y-12">
+            
             {/* Overview / Full Description */}
             <section className="space-y-4">
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#18243A] tracking-tight">
@@ -154,7 +159,7 @@ export const CourseDetailsPage: React.FC = () => {
             </section>
 
             {/* Who The Course Is For */}
-            <section className="bg-white p-8 rounded-3xl border border-[#18243A]/10 space-y-5">
+            <section className="bg-white p-8 rounded-3xl border border-[#18243A]/10 space-y-5 shadow-xs">
               <div className="flex items-center gap-2">
                 <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238]">Target Audience</span>
                 <h3 className="font-serif text-2xl font-bold text-[#18243A]">
@@ -174,7 +179,7 @@ export const CourseDetailsPage: React.FC = () => {
             {/* Learning Outcomes */}
             <section className="space-y-5">
               <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#18243A] tracking-tight">
-                What you will achieve
+                Key Learning Outcomes
               </h3>
               <div className="space-y-3">
                 {course.learningOutcomes.map((outcome, idx) => (
@@ -193,51 +198,70 @@ export const CourseDetailsPage: React.FC = () => {
               </div>
             </section>
 
-            {/* Curriculum Breakdown by Modules */}
+            {/* Interactive Curriculum Breakdown by Modules */}
             <section className="space-y-6">
               <div className="space-y-2">
                 <span className="editorial-badge bg-[#F4C96B]/20 text-[#18243A]">Structured Progression</span>
                 <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#18243A] tracking-tight">
-                  Curriculum Overview
+                  Curriculum Breakdown by Module
                 </h3>
                 <p className="text-slate-600 text-sm">
-                  Every module pairs theoretical communication frameworks with live simulations and recorded practice.
+                  Click on each module to view the weekly focus, debate scenarios, and practical deliverables.
                 </p>
               </div>
 
               <div className="space-y-4">
-                {course.curriculum.map((mod, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-white rounded-2xl p-6 border border-[#18243A]/10 space-y-3 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#18243A] text-white">
-                        {mod.week}
-                      </span>
-                      <span className="text-xs text-[#516382] font-medium">Interactive Workshop</span>
-                    </div>
-
-                    <h4 className="font-serif text-xl font-bold text-[#18243A]">
-                      {mod.title}
-                    </h4>
-
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {mod.description}
-                    </p>
-
-                    <div className="pt-2 border-t border-[#18243A]/5 flex flex-wrap gap-2">
-                      {mod.keyOutcomes.map((ko, kIdx) => (
-                        <span
-                          key={kIdx}
-                          className="text-xs bg-[#FAF8F5] text-slate-700 px-3 py-1 rounded-lg border border-[#18243A]/5 font-medium"
+                {course.curriculum.map((mod, idx) => {
+                  const isOpen = activeModule === idx;
+                  return (
+                    <div
+                      key={idx}
+                      className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                        isOpen
+                          ? 'bg-white border-[#345BEF]/40 shadow-sm'
+                          : 'bg-white/80 border-[#18243A]/10 hover:border-[#18243A]/20'
+                      }`}
+                    >
+                      <button
+                        onClick={() => setActiveModule(isOpen ? null : idx)}
+                        className="w-full text-left p-6 flex items-center justify-between gap-4 focus:outline-none focus:ring-2 focus:ring-[#345BEF]/40"
+                        aria-expanded={isOpen}
+                      >
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#18243A] text-white">
+                            {mod.week}
+                          </span>
+                          <span className="font-serif text-lg sm:text-xl font-bold text-[#18243A]">
+                            {mod.title}
+                          </span>
+                        </div>
+                        <div
+                          className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-transform ${
+                            isOpen ? 'bg-[#345BEF] text-white rotate-180' : 'bg-[#FAF8F5] text-[#18243A]'
+                          }`}
                         >
-                          ✓ {ko}
-                        </span>
-                      ))}
+                          <ChevronDown className="w-4 h-4" />
+                        </div>
+                      </button>
+
+                      {isOpen && (
+                        <div className="px-6 pb-6 pt-1 text-slate-600 text-sm leading-relaxed border-t border-[#18243A]/5 space-y-4">
+                          <p>{mod.description}</p>
+                          <div className="pt-2 flex flex-wrap gap-2">
+                            {mod.keyOutcomes.map((ko, kIdx) => (
+                              <span
+                                key={kIdx}
+                                className="text-xs bg-[#FAF8F5] text-slate-700 px-3 py-1.5 rounded-lg border border-[#18243A]/5 font-medium flex items-center gap-1.5"
+                              >
+                                <Check className="w-3 h-3 text-[#2F5238]" /> {ko}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 

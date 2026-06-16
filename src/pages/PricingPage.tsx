@@ -4,9 +4,10 @@ import {
   CheckCircle2, 
   XCircle, 
   ArrowRight, 
-  Info, 
   Clock, 
-  Users 
+  Users,
+  FileText,
+  Building
 } from 'lucide-react';
 import { pricingPlans, comparisonFeatures } from '../data/pricingPlans';
 import { faqsData } from '../data/faqs';
@@ -30,34 +31,34 @@ export const PricingPage: React.FC = () => {
               Transparent investment in your international voice.
             </h1>
             <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
-              No hidden fees, no lock-in contracts. Small collaborative cohorts or bespoke private executive mentorship.
+              No hidden fees, no contract lock-in. Intimate collaborative cohorts or bespoke private executive mentorship.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Illustrative Disclaimer Notice */}
+      {/* Corporate Sponsorship & Reimbursement Highlight Strip */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#18243A] text-white p-6 rounded-3xl border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="bg-[#18243A] text-white p-6 sm:p-7 rounded-3xl border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-md">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-xl bg-[#345BEF]/30 text-[#F4C96B] shrink-0 mt-0.5">
-              <Info className="w-5 h-5" />
+            <div className="p-2.5 rounded-xl bg-[#345BEF]/30 text-[#F4C96B] shrink-0 mt-0.5">
+              <Building className="w-5 h-5" />
             </div>
             <div>
               <h4 className="font-serif text-base font-bold text-white">
-                Illustrative Pricing Notice (Portfolio Concept)
+                Employer L&D Sponsorship & EU VAT Invoices
               </h4>
-              <p className="text-xs text-slate-300 leading-relaxed mt-0.5">
-                The tuition figures, discounts, and comparison tables displayed on this page are illustrative examples designed to demonstrate commercial frontend architecture and interactive tier selection.
+              <p className="text-xs text-slate-300 leading-relaxed mt-0.5 max-w-2xl">
+                Over 65% of our professional learners have tuition reimbursed by their company learning budgets. We provide itemized EU VAT-compliant invoices and attendance documentation.
               </p>
             </div>
           </div>
           <Link
-            to="/book-trial"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#345BEF] hover:bg-[#2646c7] text-white text-xs font-semibold shrink-0 transition-colors"
+            to="/contact?topic=corporate"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shrink-0 transition-colors border border-white/20"
           >
-            <span>Book Free Trial First</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <FileText className="w-3.5 h-3.5 text-[#F4C96B]" />
+            <span>Request Employer Invoice Template</span>
           </Link>
         </div>
       </section>
@@ -103,10 +104,10 @@ export const PricingPage: React.FC = () => {
             return (
               <div
                 key={plan.id}
-                className={`rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 relative ${
+                className={`rounded-3xl p-8 sm:p-9 flex flex-col justify-between transition-all duration-300 relative ${
                   plan.popular
-                    ? 'bg-white border-2 border-[#345BEF] shadow-xl scale-[1.02] z-10'
-                    : 'bg-white border border-[#18243A]/10 hover:shadow-lg'
+                    ? 'bg-white border-2 border-[#345BEF] shadow-2xl scale-[1.02] z-10'
+                    : 'bg-white border border-[#18243A]/10 hover:shadow-xl'
                 }`}
               >
                 {plan.popular && (

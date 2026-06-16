@@ -1,5 +1,5 @@
-import React from 'react';
-import { Award, MapPin, Sparkles, BookOpen } from 'lucide-react';
+import React, { useState } from 'react';
+import { Award, MapPin, Volume2, Sparkles, Quote } from 'lucide-react';
 import type { Teacher } from '../types';
 
 interface TeacherCardProps {
@@ -7,28 +7,62 @@ interface TeacherCardProps {
 }
 
 export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher }) => {
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
+  const toggleAudio = () => {
+    setIsPlayingAudio(!isPlayingAudio);
+  };
+
   return (
-    <div className="bg-white rounded-3xl border border-[#18243A]/10 overflow-hidden hover:shadow-xl hover:border-[#345BEF]/30 transition-all duration-300 flex flex-col justify-between group">
+    <article className="bg-white rounded-3xl border border-[#18243A]/10 overflow-hidden card-hover-lift flex flex-col justify-between group">
       <div>
         {/* Top Portrait & Location Badge */}
         <div className="relative h-72 sm:h-80 overflow-hidden bg-[#18243A]">
           <img
             src={teacher.avatarUrl}
             alt={teacher.name}
-            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#18243A] via-transparent to-transparent opacity-85" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#18243A] via-[#18243A]/40 to-transparent opacity-90" />
 
-          {/* Fictional demo badge */}
-          <div className="absolute top-4 left-4">
-            <span className="editorial-badge bg-black/60 text-white/90 backdrop-blur-md text-[10px]">
-              Fictional Demo Profile
+          {/* Top Credentials Pill */}
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+            <span className="editorial-badge bg-[#FAF8F5]/90 text-[#18243A] backdrop-blur-md text-[10px] shadow-xs">
+              {teacher.experienceYears}+ Yrs Faculty
             </span>
+
+            {/* Simulated Voice Sample Player */}
+            <button
+              onClick={toggleAudio}
+              type="button"
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold transition-all backdrop-blur-md shadow-xs ${
+                isPlayingAudio
+                  ? 'bg-[#345BEF] text-white ring-2 ring-white/30'
+                  : 'bg-black/50 text-white hover:bg-black/70 border border-white/20'
+              }`}
+              title="Click to test sample voice preview"
+            >
+              {isPlayingAudio ? (
+                <>
+                  <div className="flex items-center gap-0.5 h-3">
+                    <span className="w-0.5 bg-white soundwave-bar-1" />
+                    <span className="w-0.5 bg-white soundwave-bar-2" />
+                    <span className="w-0.5 bg-white soundwave-bar-3" />
+                  </div>
+                  <span>Sample Playing</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 className="w-3.5 h-3.5 text-[#F4C96B]" />
+                  <span>Voice Sample</span>
+                </>
+              )}
+            </button>
           </div>
 
-          {/* Accent & Experience at bottom of photo */}
-          <div className="absolute bottom-4 left-4 right-4 text-white">
+          {/* Accent & Name at bottom of photo */}
+          <div className="absolute bottom-4 left-5 right-5 text-white">
             <div className="flex items-center gap-1.5 text-xs text-[#F4C96B] mb-1 font-medium">
               <MapPin className="w-3.5 h-3.5 shrink-0" />
               <span>{teacher.location}</span>
@@ -78,7 +112,7 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher }) => {
           <div className="space-y-2 pt-2 border-t border-[#18243A]/5">
             <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#516382]">
               <Award className="w-3.5 h-3.5 text-[#F4C96B]" />
-              <span>Credentials & Experience ({teacher.experienceYears} Years)</span>
+              <span>Credentials & Accreditations</span>
             </div>
             <ul className="space-y-1 text-xs text-slate-600">
               {teacher.qualifications.map((q, idx) => (
@@ -93,12 +127,14 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher }) => {
       </div>
 
       {/* Quote Footer */}
-      <div className="px-6 pb-6 pt-2">
-        <div className="text-xs text-[#516382] bg-white p-3 rounded-xl border border-dashed border-[#18243A]/15 flex items-start gap-2">
-          <BookOpen className="w-4 h-4 text-[#345BEF] shrink-0 mt-0.5" />
-          <span className="italic">{teacher.favoriteQuote}</span>
+      <div className="px-6 pb-6 pt-0">
+        <div className="text-xs text-[#516382] bg-white p-3.5 rounded-2xl border border-dashed border-[#18243A]/15 flex items-start gap-2.5">
+          <Quote className="w-4 h-4 text-[#345BEF] shrink-0 mt-0.5" />
+          <span className="italic font-serif text-[13px] text-[#18243A]">
+            {teacher.favoriteQuote}
+          </span>
         </div>
       </div>
-    </div>
+    </article>
   );
 };

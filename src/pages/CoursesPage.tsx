@@ -8,7 +8,9 @@ import {
   ArrowRight, 
   RotateCcw,
   Clock,
-  Users
+  Users,
+  LayoutGrid,
+  List
 } from 'lucide-react';
 import { coursesData } from '../data/courses';
 import { CourseCard } from '../components/CourseCard';
@@ -18,6 +20,7 @@ export const CoursesPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedLevel, setSelectedLevel] = useState<string>('All');
   const [selectedFormat, setSelectedFormat] = useState<string>('All');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const categories = ['All', 'General', 'Conversation', 'Business', 'Exams', 'Specialized'];
   const levels = ['All', 'A2', 'B1', 'B2', 'C1', 'C2'];
@@ -60,7 +63,7 @@ export const CoursesPage: React.FC = () => {
     selectedLevel !== 'All' ||
     selectedFormat !== 'All';
 
-  // Find a featured course to highlight editorially
+  // Highlighted flagship course
   const featuredCourse = coursesData.find((c) => c.id === 'business-english') || coursesData[0];
 
   return (
@@ -70,13 +73,13 @@ export const CoursesPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-4">
             <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/20">
-              Academic Syllabi & Programs
+              European Academy Syllabi
             </span>
             <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#18243A] tracking-tight">
               Curriculum designed for real life across Europe.
             </h1>
             <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
-              Every course is structured for small cohorts (max 5) or intensive 1-on-1 mentorship, with hours tailored around European working rhythms.
+              Every course is structured for small cohorts (max 5 students) or private executive mentorship, synchronized with European timezones (CET & GMT).
             </p>
           </div>
         </div>
@@ -84,8 +87,10 @@ export const CoursesPage: React.FC = () => {
 
       {/* Featured Course Spotlight Banner */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#18243A] rounded-3xl p-8 sm:p-12 text-white border border-white/10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-xl">
-          <div className="lg:col-span-7 space-y-5">
+        <div className="bg-[#18243A] rounded-3xl p-8 sm:p-12 text-white border border-white/10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#345BEF]/15 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="lg:col-span-7 space-y-5 relative z-10">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="editorial-badge bg-[#F4C96B] text-[#18243A]">
                 Spotlight Program
@@ -114,7 +119,7 @@ export const CoursesPage: React.FC = () => {
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <Link
                 to={`/courses/${featuredCourse.slug}`}
-                className="inline-flex items-center gap-2 bg-[#345BEF] hover:bg-[#2646c7] text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors"
+                className="inline-flex items-center gap-2 bg-[#345BEF] hover:bg-[#2646c7] text-white px-6 py-3 rounded-xl font-semibold text-sm transition-colors shadow-md"
               >
                 <span>View Full Syllabus & Schedule</span>
                 <ArrowRight className="w-4 h-4" />
@@ -127,16 +132,16 @@ export const CoursesPage: React.FC = () => {
               </Link>
             </div>
           </div>
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 relative z-10">
             <div className="rounded-2xl overflow-hidden aspect-[4/3] border-2 border-white/20 shadow-2xl relative">
               <img
                 src={featuredCourse.imageUrl}
                 alt={featuredCourse.title}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#18243A]/70 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 bg-white/95 text-[#18243A] p-3 rounded-xl backdrop-blur-sm text-xs font-medium">
-                🎯 Top rated among tech leads in Berlin, Amsterdam, and Stockholm.
+              <div className="absolute inset-0 bg-gradient-to-t from-[#18243A]/80 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 bg-white/95 text-[#18243A] p-3 rounded-xl backdrop-blur-sm text-xs font-medium border border-white/20 shadow-sm">
+                🎯 Top rated among tech leads and founders in Berlin, Amsterdam, and Stockholm.
               </div>
             </div>
           </div>
@@ -145,6 +150,7 @@ export const CoursesPage: React.FC = () => {
 
       {/* Main Filter Toolbar & Results */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        
         {/* Interactive Filter Control Bar */}
         <div className="bg-white p-6 rounded-3xl border border-[#18243A]/10 shadow-sm space-y-6">
           <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
@@ -155,20 +161,42 @@ export const CoursesPage: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search courses, skills, or keywords (e.g. IELTS, Business, Fluency)..."
+                placeholder="Search courses, skills, or topics (e.g. IELTS, Business, Fluency)..."
                 className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#FAF8F5] border border-[#18243A]/10 text-sm text-[#18243A] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#345BEF]"
               />
             </div>
 
-            {/* Quick Level Quiz Pill */}
-            <Link
-              to="/quiz"
-              className="inline-flex items-center gap-2 bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/30 px-4 py-3 rounded-xl text-xs font-semibold hover:bg-[#d8e6da] transition-colors"
-            >
-              <Sparkles className="w-4 h-4 text-[#345BEF]" />
-              <span>Not sure what level fits you? Take our CEFR quiz</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            {/* Quick Level Quiz Pill & View Toggle */}
+            <div className="flex items-center gap-3">
+              <Link
+                to="/quiz"
+                className="inline-flex items-center gap-2 bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/30 px-4 py-2.5 rounded-xl text-xs font-semibold hover:bg-[#d8e6da] transition-colors"
+              >
+                <Sparkles className="w-4 h-4 text-[#345BEF]" />
+                <span>Unsure of your level? Take CEFR quiz</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+
+              {/* View mode toggle */}
+              <div className="hidden sm:inline-flex p-1 rounded-xl bg-[#FAF8F5] border border-[#18243A]/10">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[#18243A] text-white' : 'text-[#516382] hover:text-[#18243A]'}`}
+                  aria-label="Grid View"
+                  title="Grid View"
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-[#18243A] text-white' : 'text-[#516382] hover:text-[#18243A]'}`}
+                  aria-label="Editorial List View"
+                  title="Editorial List View"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Filter Pills Rows */}
@@ -247,16 +275,70 @@ export const CoursesPage: React.FC = () => {
           <span>
             Showing <strong className="text-[#18243A]">{filteredCourses.length}</strong> available programs
           </span>
-          <span className="text-xs">All syllabi aligned with CEFR standards</span>
+          <span className="text-xs">Synchronized with CET / GMT</span>
         </div>
 
-        {/* Courses Catalog Grid */}
+        {/* Courses Display: Grid or Editorial List */}
         {filteredCourses.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
-            ))}
-          </div>
+          viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredCourses.map((course) => (
+                <CourseCard key={course.id} course={course} />
+              ))}
+            </div>
+          ) : (
+            /* Editorial List View */
+            <div className="space-y-4">
+              {filteredCourses.map((c) => (
+                <article
+                  key={c.id}
+                  className="bg-white p-6 sm:p-8 rounded-3xl border border-[#18243A]/10 hover:border-[#345BEF]/40 transition-all card-hover-lift flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6"
+                >
+                  <div className="space-y-2 max-w-2xl">
+                    <div className="flex items-center gap-2">
+                      <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] text-[10px]">
+                        {c.category}
+                      </span>
+                      <span className="text-xs text-[#516382] font-semibold">
+                        Level: {c.level} • {c.format}
+                      </span>
+                    </div>
+                    <h3 className="font-serif text-2xl font-bold text-[#18243A]">
+                      <Link to={`/courses/${c.slug}`} className="hover:text-[#345BEF] transition-colors">
+                        {c.title}
+                      </Link>
+                    </h3>
+                    <p className="text-slate-600 text-sm leading-relaxed">
+                      {c.shortDescription}
+                    </p>
+                    <div className="pt-2 flex flex-wrap gap-2 text-xs text-slate-500">
+                      {c.learningOutcomes.slice(0, 2).map((lo, lIdx) => (
+                        <span key={lIdx} className="bg-[#FAF8F5] px-2.5 py-1 rounded-md border border-[#18243A]/5">
+                          ✓ {lo}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex lg:flex-col items-center lg:items-end justify-between w-full lg:w-auto gap-4 pt-4 lg:pt-0 border-t lg:border-t-0 border-[#18243A]/10 shrink-0">
+                    <div className="text-left lg:text-right">
+                      <span className="text-[10px] uppercase font-bold text-[#516382] block">Indicative Fee</span>
+                      <span className="font-serif text-2xl font-bold text-[#18243A]">€{c.indicativePrice}</span>
+                      <span className="text-xs text-slate-500"> / month</span>
+                    </div>
+
+                    <Link
+                      to={`/courses/${c.slug}`}
+                      className="inline-flex items-center gap-1.5 bg-[#18243A] hover:bg-[#345BEF] text-white px-5 py-2.5 rounded-xl text-xs font-semibold transition-colors"
+                    >
+                      <span>Explore Syllabus</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )
         ) : (
           <div className="bg-white rounded-3xl p-12 text-center border border-[#18243A]/10 space-y-4">
             <BookOpen className="w-10 h-10 text-slate-400 mx-auto" />
