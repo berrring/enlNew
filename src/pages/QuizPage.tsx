@@ -13,17 +13,23 @@ import {
   Share2, 
   Check 
 } from 'lucide-react';
-import { quizQuestions, getLevelResult } from '../data/quizQuestions';
+import { getQuizQuestions, getLevelResult } from '../data/quizQuestions';
 import type { LevelResult } from '../data/quizQuestions';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslations } from '../data/translations';
 
 export const QuizPage: React.FC = () => {
+  const { language } = useLanguage();
+  const t = getTranslations(language).quizPage;
+  const quizQuestions = getQuizQuestions(language);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<{ [questionId: number]: number }>({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
-  const currentQuestion = quizQuestions[currentIndex];
+  const currentQuestion = quizQuestions[currentIndex] || quizQuestions[0];
   const totalQuestions = quizQuestions.length;
   const progressPercent = Math.round(((currentIndex + 1) / totalQuestions) * 100);
 
@@ -44,7 +50,7 @@ export const QuizPage: React.FC = () => {
       const optionMap: { [key: string]: number } = { A: 0, B: 1, C: 2, D: 3 };
       if (key in optionMap) {
         const optionIndex = optionMap[key];
-        if (currentQuestion.options[optionIndex]) {
+        if (currentQuestion && currentQuestion.options[optionIndex]) {
           handleSelectOption(currentQuestion.options[optionIndex].levelScore);
         }
       } else if (e.key === 'Enter' && selectedAnswers[currentQuestion.id] !== undefined) {
@@ -54,7 +60,7 @@ export const QuizPage: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, isCompleted, selectedAnswers]);
+  }, [currentIndex, isCompleted, selectedAnswers, currentQuestion]);
 
   const handleNext = () => {
     setShowExplanation(false);
@@ -100,7 +106,7 @@ export const QuizPage: React.FC = () => {
   // Compute final score
   const totalScore = Object.values(selectedAnswers).reduce((sum, val) => sum + val, 0);
   const finalScore = Object.keys(selectedAnswers).length > 0 ? totalScore : 18;
-  const resultData: LevelResult = getLevelResult(finalScore);
+  const resultData: LevelResult = getLevelResult(finalScore, language);
 
   return (
     <div className="pb-24 space-y-16">
@@ -109,13 +115,13 @@ export const QuizPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-4">
             <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/20">
-              Interactive Placement Diagnostic
+              {t.badge}
             </span>
             <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#18243A] tracking-tight">
-              Estimate your CEFR English level.
+              {t.title}
             </h1>
             <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
-              8 calibrated linguistic scenarios assessing idiomatic ease, connector nuance, and structural accuracy. Takes approximately 5 minutes.
+              {t.desc}
             </p>
           </div>
         </div>
@@ -132,12 +138,12 @@ export const QuizPage: React.FC = () => {
               <div className="flex items-center justify-between text-xs text-[#516382] font-semibold">
                 <span className="flex items-center gap-1.5">
                   <Compass className="w-4 h-4 text-[#345BEF]" />
-                  <span>Question {currentIndex + 1} of {totalQuestions}</span>
+                  <span>{t.questionOf} {currentIndex + 1} / {totalQuestions}</span>
                 </span>
                 <span className="hidden sm:inline text-slate-400 font-normal">
-                  (Tip: Press A, B, C, or D on your keyboard)
+                  {t.tipKeyboard}
                 </span>
-                <span>{progressPercent}% Complete</span>
+                <span>{progressPercent}{t.completePercent}</span>
               </div>
               <div className="w-full h-2 rounded-full bg-[#FAF8F5] overflow-hidden border border-[#18243A]/5">
                 <div
@@ -195,7 +201,7 @@ export const QuizPage: React.FC = () => {
             {showExplanation && (
               <div className="p-4 rounded-2xl bg-[#E7F0E8] border border-[#2F5238]/20 text-xs text-[#2F5238] space-y-1 animate-fade-in">
                 <span className="font-bold flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
-                  <Sparkles className="w-3.5 h-3.5 text-[#345BEF]" /> Linguistic Rationale:
+                  <Sparkles className="w-3.5 h-3.5 text-[#345BEF]" /> {t.linguisticRationale}
                 </span>
                 <p className="leading-relaxed">{currentQuestion.explanation}</p>
               </div>
@@ -210,7 +216,7 @@ export const QuizPage: React.FC = () => {
                 className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl border border-[#18243A]/10 text-xs sm:text-sm font-semibold text-[#18243A] hover:bg-[#FAF8F5] transition-colors disabled:opacity-30 disabled:pointer-events-none"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>Previous</span>
+                <span>{t.previousBtn}</span>
               </button>
 
               <button
@@ -219,7 +225,7 @@ export const QuizPage: React.FC = () => {
                 disabled={selectedAnswers[currentQuestion.id] === undefined}
                 className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-[#345BEF] hover:bg-[#2646c7] text-white text-xs sm:text-sm font-bold transition-all shadow-md disabled:opacity-40 disabled:pointer-events-none"
               >
-                <span>{currentIndex === totalQuestions - 1 ? 'See Results' : 'Next Question'}</span>
+                <span>{currentIndex === totalQuestions - 1 ? t.seeResultsBtn : t.nextBtn}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -230,10 +236,10 @@ export const QuizPage: React.FC = () => {
             {/* Top Score Banner */}
             <div className="text-center space-y-4">
               <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/30">
-                Diagnostic Assessment Complete
+                {t.assessmentComplete}
               </span>
               <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#18243A] tracking-tight">
-                Estimated CEFR Level: <span className="text-[#345BEF]">{resultData.cefr}</span>
+                {t.estimatedLevel} <span className="text-[#345BEF]">{resultData.cefr}</span>
               </h2>
               <p className="font-serif text-xl text-[#18243A] font-semibold">
                 {resultData.levelName}
@@ -249,7 +255,7 @@ export const QuizPage: React.FC = () => {
               <div className="bg-[#FAF8F5] p-6 rounded-2xl border border-[#18243A]/5 space-y-3">
                 <div className="flex items-center gap-2 text-[#2F5238] font-bold text-xs uppercase tracking-wider">
                   <CheckCircle2 className="w-4 h-4 text-[#2F5238]" />
-                  <span>Demonstrated Competencies</span>
+                  <span>{t.competenciesTitle}</span>
                 </div>
                 <ul className="space-y-2 text-xs text-slate-700">
                   {resultData.strengths.map((str, idx) => (
@@ -265,7 +271,7 @@ export const QuizPage: React.FC = () => {
               <div className="bg-[#FAF8F5] p-6 rounded-2xl border border-[#18243A]/5 space-y-3">
                 <div className="flex items-center gap-2 text-[#345BEF] font-bold text-xs uppercase tracking-wider">
                   <Award className="w-4 h-4 text-[#345BEF]" />
-                  <span>Optimal Development Targets</span>
+                  <span>{t.targetsTitle}</span>
                 </div>
                 <ul className="space-y-2 text-xs text-slate-700">
                   {resultData.growthAreas.map((ga, idx) => (
@@ -281,14 +287,16 @@ export const QuizPage: React.FC = () => {
             {/* Suggested Course Box */}
             <div className="bg-[#18243A] text-white p-8 rounded-3xl border border-white/10 space-y-5">
               <span className="editorial-badge bg-[#F4C96B] text-[#18243A]">
-                Recommended Starting Curriculum
+                {t.recommendedBadge}
               </span>
               <div className="space-y-2">
                 <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white">
                   {resultData.recommendedCourseTitle}
                 </h3>
                 <p className="text-slate-300 text-sm leading-relaxed">
-                  Based on your responses, this cohort is calibrated to challenge your vocabulary, eradicate subtle grammatical hesitation, and elevate your international presence.
+                  {language === 'ru'
+                    ? 'Судя по вашим ответам, эта учебная программа идеально сбалансирована, чтобы раскрыть ваш потенциал, устранить грамматическую скованность и повысить авторитет на международных встречах.'
+                    : 'Based on your responses, this cohort is calibrated to challenge your vocabulary, eradicate subtle grammatical hesitation, and elevate your international presence.'}
                 </p>
               </div>
 
@@ -297,7 +305,7 @@ export const QuizPage: React.FC = () => {
                   to={`/courses/${resultData.recommendedCourseSlug}`}
                   className="inline-flex items-center justify-center gap-2 bg-[#345BEF] hover:bg-[#2646c7] text-white px-6 py-3.5 rounded-xl font-bold text-sm transition-all shadow-md"
                 >
-                  <span>Explore Course Syllabus</span>
+                  <span>{t.exploreSyllabusBtn}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
 
@@ -305,7 +313,7 @@ export const QuizPage: React.FC = () => {
                   to={`/book-trial?course=${resultData.recommendedCourseSlug}&level=${resultData.cefr}`}
                   className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white px-6 py-3.5 rounded-xl font-semibold text-sm transition-all border border-white/20"
                 >
-                  <span>Book Free Trial at This Level</span>
+                  <span>{t.bookTrialLevelBtn}</span>
                 </Link>
               </div>
             </div>
@@ -315,7 +323,7 @@ export const QuizPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Info className="w-4 h-4 text-[#345BEF] shrink-0" />
                 <span>
-                  <strong>Note:</strong> This quiz provides an indicative CEFR estimate for educational placement. It does not replace an official IELTS, Cambridge, or TOEFL credential.
+                  {t.noteText}
                 </span>
               </div>
 
@@ -326,7 +334,7 @@ export const QuizPage: React.FC = () => {
                   className="inline-flex items-center gap-1.5 text-slate-700 hover:text-[#345BEF] font-semibold"
                 >
                   {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
-                  <span>{copiedLink ? 'Copied summary!' : 'Share result'}</span>
+                  <span>{copiedLink ? t.copiedBtn : t.shareBtn}</span>
                 </button>
                 <span>•</span>
                 <button
@@ -334,7 +342,7 @@ export const QuizPage: React.FC = () => {
                   onClick={resetQuiz}
                   className="inline-flex items-center gap-1.5 text-[#18243A] hover:text-[#345BEF] font-semibold"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" /> Retake Quiz
+                  <RotateCcw className="w-3.5 h-3.5" /> {t.retakeBtn}
                 </button>
               </div>
             </div>

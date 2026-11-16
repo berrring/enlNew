@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { X, Sparkles } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslations } from '../data/translations';
 
 export const DemoDisclaimerBanner: React.FC = () => {
   const [dismissed, setDismissed] = useState(false);
+  const { language } = useLanguage();
+  const t = getTranslations(language).banner;
 
   if (dismissed) return null;
 
@@ -11,10 +15,10 @@ export const DemoDisclaimerBanner: React.FC = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         <div className="flex items-center gap-2.5 flex-wrap">
           <span className="inline-flex items-center gap-1 bg-[#345BEF] text-white font-semibold px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider shadow-2xs">
-            <Sparkles className="w-3 h-3 text-[#F4C96B]" /> Portfolio Case Study
+            <Sparkles className="w-3 h-3 text-[#F4C96B]" /> {t.caseStudy}
           </span>
           <span className="text-slate-300 text-xs">
-            FluentBridge is a commercial website concept created for demonstration. Syllabi, tutors, and sample timetables are realistic fictional examples.
+            {t.notice}
           </span>
         </div>
         <button

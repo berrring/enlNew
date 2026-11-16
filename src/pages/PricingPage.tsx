@@ -9,14 +9,25 @@ import {
   FileText,
   Building
 } from 'lucide-react';
-import { pricingPlans, comparisonFeatures } from '../data/pricingPlans';
-import { faqsData } from '../data/faqs';
+import { getPricingPlans, getComparisonFeatures } from '../data/pricingPlans';
+import { getFaqs } from '../data/faqs';
 import { Accordion } from '../components/Accordion';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslations } from '../data/translations';
 
 export const PricingPage: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'quarterly'>('monthly');
+  const { language } = useLanguage();
+  const t = getTranslations(language).pricingPage;
+  const pricingPlans = getPricingPlans(language);
+  const comparisonFeatures = getComparisonFeatures(language);
+  const faqsData = getFaqs(language);
 
-  const pricingFaqs = faqsData.filter((f) => f.category === 'Trial & Pricing');
+  const pricingFaqs = faqsData.filter((f) => 
+    language === 'ru' 
+      ? f.category === 'Пробный урок и оплата' || f.category === 'Trial & Pricing'
+      : f.category === 'Trial & Pricing'
+  );
 
   return (
     <div className="pb-24 space-y-16">
@@ -25,13 +36,13 @@ export const PricingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-4">
             <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/20">
-              Tuition & Plans
+              {t.badge}
             </span>
             <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#18243A] tracking-tight">
-              Transparent investment in your international voice.
+              {t.title}
             </h1>
             <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
-              No hidden fees, no contract lock-in. Intimate collaborative cohorts or bespoke private executive mentorship.
+              {t.desc}
             </p>
           </div>
         </div>
@@ -46,10 +57,10 @@ export const PricingPage: React.FC = () => {
             </div>
             <div>
               <h4 className="font-serif text-base font-bold text-white">
-                Employer L&D Sponsorship & EU VAT Invoices
+                {t.sponsorshipTitle}
               </h4>
               <p className="text-xs text-slate-300 leading-relaxed mt-0.5 max-w-2xl">
-                Over 65% of our professional learners have tuition reimbursed by their company learning budgets. We provide itemized EU VAT-compliant invoices and attendance documentation.
+                {t.sponsorshipDesc}
               </p>
             </div>
           </div>
@@ -58,7 +69,7 @@ export const PricingPage: React.FC = () => {
             className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold shrink-0 transition-colors border border-white/20"
           >
             <FileText className="w-3.5 h-3.5 text-[#F4C96B]" />
-            <span>Request Employer Invoice Template</span>
+            <span>{t.requestInvoiceBtn}</span>
           </Link>
         </div>
       </section>
@@ -74,7 +85,7 @@ export const PricingPage: React.FC = () => {
                 : 'text-[#516382] hover:text-[#18243A]'
             }`}
           >
-            Monthly Tuition
+            {t.monthlyTuition}
           </button>
           <button
             onClick={() => setBillingCycle('quarterly')}
@@ -84,9 +95,9 @@ export const PricingPage: React.FC = () => {
                 : 'text-[#516382] hover:text-[#18243A]'
             }`}
           >
-            <span>Quarterly Commitment</span>
+            <span>{t.quarterlyCommitment}</span>
             <span className="bg-[#F4C96B] text-[#18243A] text-[10px] px-2 py-0.5 rounded-full font-bold">
-              Save 15%
+              {t.savePercent}
             </span>
           </button>
         </div>
@@ -113,7 +124,7 @@ export const PricingPage: React.FC = () => {
                 {plan.popular && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                     <span className="editorial-badge bg-[#345BEF] text-white shadow-md">
-                      Most Chosen by Professionals
+                      {t.mostChosenBadge}
                     </span>
                   </div>
                 )}
@@ -134,12 +145,12 @@ export const PricingPage: React.FC = () => {
                       <span className="text-4xl sm:text-5xl font-bold font-serif text-[#18243A]">
                         €{displayPrice}
                       </span>
-                      <span className="text-xs text-slate-500 font-medium">/ month</span>
+                      <span className="text-xs text-slate-500 font-medium">/ {language === 'ru' ? 'мес' : 'month'}</span>
                     </div>
                     <div className="text-xs text-[#345BEF] font-semibold mt-1">
                       {billingCycle === 'quarterly'
-                        ? 'Billed quarterly (€' + displayPrice * 3 + ' / 3 months)'
-                        : 'Billed monthly, cancel anytime'}
+                        ? (language === 'ru' ? `Оплата за квартал (€${displayPrice * 3} за 3 мес)` : `Billed quarterly (€${displayPrice * 3} / 3 months)`)
+                        : t.billedMonthly}
                     </div>
                   </div>
 
@@ -158,7 +169,7 @@ export const PricingPage: React.FC = () => {
                   {/* Feature list */}
                   <div className="space-y-3 pt-2">
                     <div className="text-xs font-bold uppercase tracking-wider text-[#516382]">
-                      What's Included:
+                      {t.whatsIncluded}
                     </div>
                     <ul className="space-y-2.5">
                       {plan.features.map((feat, idx) => (
@@ -185,7 +196,7 @@ export const PricingPage: React.FC = () => {
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                   <p className="text-[11px] text-center text-slate-400">
-                    Includes 30-day satisfaction guarantee
+                    {t.guaranteeNote}
                   </p>
                 </div>
               </div>
@@ -198,10 +209,10 @@ export const PricingPage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="space-y-2">
           <span className="editorial-badge bg-[#FAF8F5] text-[#516382] border border-[#18243A]/10">
-            Side-by-Side Evaluation
+            {t.matrixBadge}
           </span>
           <h2 className="font-serif text-3xl font-bold text-[#18243A] tracking-tight">
-            Comprehensive Plan Comparison
+            {t.matrixTitle}
           </h2>
         </div>
 
@@ -211,7 +222,7 @@ export const PricingPage: React.FC = () => {
               <thead>
                 <tr className="bg-[#FAF8F5] border-b border-[#18243A]/10">
                   <th className="py-4 px-6 font-serif font-bold text-[#18243A] w-2/5">
-                    Features & Specifications
+                    {t.featureHeader}
                   </th>
                   <th className="py-4 px-4 font-serif font-bold text-[#18243A] text-center w-1/5">
                     Essential
@@ -282,10 +293,10 @@ export const PricingPage: React.FC = () => {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center space-y-3">
           <span className="editorial-badge bg-[#FAF8F5] text-[#516382] border border-[#18243A]/10">
-            Invoicing & Reimbursement
+            {t.faqBadge}
           </span>
           <h3 className="font-serif text-3xl font-bold text-[#18243A]">
-            Pricing & Corporate Sponsorship FAQ
+            {t.faqTitle}
           </h3>
         </div>
 

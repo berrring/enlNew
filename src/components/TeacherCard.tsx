@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Award, MapPin, Volume2, Sparkles, Quote } from 'lucide-react';
 import type { Teacher } from '../types';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslations } from '../data/translations';
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -8,6 +10,8 @@ interface TeacherCardProps {
 
 export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher }) => {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const { language } = useLanguage();
+  const t = getTranslations(language).teachersPage;
 
   const toggleAudio = () => {
     setIsPlayingAudio(!isPlayingAudio);
@@ -29,7 +33,7 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher }) => {
           {/* Top Credentials Pill */}
           <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
             <span className="editorial-badge bg-[#FAF8F5]/90 text-[#18243A] backdrop-blur-md text-[10px] shadow-xs">
-              {teacher.experienceYears}+ Yrs Faculty
+              {teacher.experienceYears}+ {t.facultyYrs}
             </span>
 
             {/* Simulated Voice Sample Player */}
@@ -50,12 +54,12 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher }) => {
                     <span className="w-0.5 bg-white soundwave-bar-2" />
                     <span className="w-0.5 bg-white soundwave-bar-3" />
                   </div>
-                  <span>Sample Playing</span>
+                  <span>{t.samplePlaying}</span>
                 </>
               ) : (
                 <>
                   <Volume2 className="w-3.5 h-3.5 text-[#F4C96B]" />
-                  <span>Voice Sample</span>
+                  <span>{t.voiceSample}</span>
                 </>
               )}
             </button>
@@ -101,7 +105,7 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher }) => {
           <div className="bg-[#FAF8F5] p-4 rounded-2xl border border-[#18243A]/5 space-y-1.5">
             <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#18243A]">
               <Sparkles className="w-3.5 h-3.5 text-[#345BEF]" />
-              <span>Teaching Philosophy</span>
+              <span>{t.teachingPhilosophy}</span>
             </div>
             <p className="text-xs text-slate-600 italic leading-relaxed">
               {teacher.teachingStyle}
@@ -112,7 +116,7 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher }) => {
           <div className="space-y-2 pt-2 border-t border-[#18243A]/5">
             <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#516382]">
               <Award className="w-3.5 h-3.5 text-[#F4C96B]" />
-              <span>Credentials & Accreditations</span>
+              <span>{t.credentialsTitle}</span>
             </div>
             <ul className="space-y-1 text-xs text-slate-600">
               {teacher.qualifications.map((q, idx) => (

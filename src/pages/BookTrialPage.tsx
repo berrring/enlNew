@@ -11,7 +11,9 @@ import {
   BookOpen, 
   FileCheck
 } from 'lucide-react';
-import { coursesData } from '../data/courses';
+import { getCourses } from '../data/courses';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslations } from '../data/translations';
 
 interface TrialFormData {
   fullName: string;
@@ -35,12 +37,15 @@ interface FormErrors {
 export const BookTrialPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const initialCourse = searchParams.get('course') || 'general-english';
+  const { language } = useLanguage();
+  const t = getTranslations(language).trialPage;
+  const coursesData = getCourses(language);
 
   const [formData, setFormData] = useState<TrialFormData>({
     fullName: '',
     email: '',
     course: initialCourse,
-    level: 'B1 Intermediate',
+    level: language === 'ru' ? 'B1 Средний (понимаю хорошо, говорю медленно)' : 'B1 Intermediate',
     preferredDate: '',
     preferredTime: '18:30 CET (Evening Prime)',
     goalsNotes: ''
@@ -62,51 +67,67 @@ export const BookTrialPage: React.FC = () => {
     }
   }, [searchParams]);
 
-  const timeSlots = [
-    '08:00 CET (Early Morning Sprint)',
-    '12:30 CET (Lunchtime Express)',
-    '17:00 CET (Early Evening)',
-    '18:30 CET (Evening Prime)',
-    '20:00 CET (Late Evening)'
-  ];
+  const timeSlots = language === 'ru'
+    ? [
+        '08:00 CET (Утренний спринт перед работой)',
+        '12:30 CET (Обеденный перерыв / экспресс)',
+        '17:00 CET (Конец рабочего дня)',
+        '18:30 CET (Вечерний прайм-тайм)',
+        '20:00 CET (Поздний вечерний слот)'
+      ]
+    : [
+        '08:00 CET (Early Morning Sprint)',
+        '12:30 CET (Lunchtime Express)',
+        '17:00 CET (Early Evening)',
+        '18:30 CET (Evening Prime)',
+        '20:00 CET (Late Evening)'
+      ];
 
-  const levels = [
-    'A1 / A2 (Elementary / Beginner)',
-    'B1 Intermediate (Comfortable listening, slow speaking)',
-    'B2 Upper-Intermediate (Strong conversational, need polish)',
-    'C1 / C2 Advanced (Executive fluency, nuanced debate)',
-    'Unsure (I want the coach to diagnose me)'
-  ];
+  const levels = language === 'ru'
+    ? [
+        'A1 / A2 (Начальный / базовый)',
+        'B1 Средний (понимаю хорошо, говорю медленно)',
+        'B2 Выше среднего (свободное общение, нужна полировка)',
+        'C1 / C2 Продвинутый (свободная речь, дебаты и нюансы)',
+        'Не уверен(а) (хочу, чтобы преподаватель оценил мой уровень)'
+      ]
+    : [
+        'A1 / A2 (Elementary / Beginner)',
+        'B1 Intermediate (Comfortable listening, slow speaking)',
+        'B2 Upper-Intermediate (Strong conversational, need polish)',
+        'C1 / C2 Advanced (Executive fluency, nuanced debate)',
+        'Unsure (I want the coach to diagnose me)'
+      ];
 
   const validate = (): boolean => {
     const errs: FormErrors = {};
 
     if (!formData.fullName.trim()) {
-      errs.fullName = 'Please enter your full name.';
+      errs.fullName = language === 'ru' ? 'Пожалуйста, введите ваше имя.' : 'Please enter your full name.';
     } else if (formData.fullName.trim().length < 2) {
-      errs.fullName = 'Full name must be at least 2 characters.';
+      errs.fullName = language === 'ru' ? 'Имя должно содержать минимум 2 символа.' : 'Full name must be at least 2 characters.';
     }
 
     if (!formData.email.trim()) {
-      errs.email = 'Please provide your email address.';
+      errs.email = language === 'ru' ? 'Укажите ваш email адрес.' : 'Please provide your email address.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errs.email = 'Please provide a valid email format.';
+      errs.email = language === 'ru' ? 'Неверный формат email адреса.' : 'Please provide a valid email format.';
     }
 
     if (!formData.course) {
-      errs.course = 'Please select a course of interest.';
+      errs.course = language === 'ru' ? 'Выберите интересующую программу.' : 'Please select a course of interest.';
     }
 
     if (!formData.level) {
-      errs.level = 'Please indicate your estimated level.';
+      errs.level = language === 'ru' ? 'Укажите предполагаемый уровень.' : 'Please indicate your estimated level.';
     }
 
     if (!formData.preferredDate) {
-      errs.preferredDate = 'Please select a date for your trial.';
+      errs.preferredDate = language === 'ru' ? 'Выберите дату для урока.' : 'Please select a date for your trial.';
     }
 
     if (!formData.preferredTime) {
-      errs.preferredTime = 'Please pick a preferred CET time slot.';
+      errs.preferredTime = language === 'ru' ? 'Выберите время (CET).' : 'Please pick a preferred CET time slot.';
     }
 
     setErrors(errs);
@@ -142,13 +163,13 @@ export const BookTrialPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-4">
             <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/20">
-              Complimentary 30-Minute Diagnostic
+              {t.badge}
             </span>
             <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#18243A] tracking-tight">
-              Book your private diagnostic lesson.
+              {t.title}
             </h1>
             <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
-              Meet 1-on-1 with an Oxford or Cambridge accredited educator to evaluate your pronunciation, diagnose syntax hesitation, and create a 90-day trajectory.
+              {t.desc}
             </p>
           </div>
         </div>
@@ -171,13 +192,15 @@ export const BookTrialPage: React.FC = () => {
 
                   <div className="space-y-2">
                     <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238]">
-                      Demo Booking Confirmed
+                      {t.confirmedBadge}
                     </span>
                     <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#18243A]">
-                      You're all set, {formData.fullName}!
+                      {language === 'ru' ? `Всё готово, ${formData.fullName}!` : `You're all set, ${formData.fullName}!`}
                     </h2>
                     <p className="text-slate-600 text-base max-w-lg mx-auto leading-relaxed">
-                      Your trial lesson request for <strong>{selectedCourseObj?.title || 'FluentBridge Academy'}</strong> has been simulated.
+                      {language === 'ru' 
+                        ? `Ваша запись на пробный урок по программе «${selectedCourseObj?.title || 'FluentBridge'}» успешно смоделирована.`
+                        : `Your trial lesson request for ${selectedCourseObj?.title || 'FluentBridge Academy'} has been simulated.`}
                     </p>
                   </div>
 
@@ -185,32 +208,32 @@ export const BookTrialPage: React.FC = () => {
                   <div className="bg-[#FAF8F5] rounded-2xl p-6 text-left max-w-md mx-auto border border-[#18243A]/10 space-y-3.5 text-xs text-slate-700 shadow-2xs">
                     <div className="flex items-center justify-between border-b border-[#18243A]/10 pb-3">
                       <span className="font-serif font-bold text-sm text-[#18243A] flex items-center gap-1.5">
-                        <FileCheck className="w-4 h-4 text-[#345BEF]" /> Diagnostic Session Ticket
+                        <FileCheck className="w-4 h-4 text-[#345BEF]" /> {t.ticketTitle}
                       </span>
                       <span className="text-[10px] uppercase font-bold text-[#2F5238] bg-[#E7F0E8] px-2 py-0.5 rounded-full">
-                        Confirmed (Demo)
+                        {t.confirmedStatus}
                       </span>
                     </div>
 
                     <div className="flex justify-between py-1">
-                      <span className="text-slate-500">Student:</span>
+                      <span className="text-slate-500">{t.studentLabel}:</span>
                       <span className="font-semibold text-[#18243A]">{formData.fullName} ({formData.email})</span>
                     </div>
                     <div className="flex justify-between py-1">
-                      <span className="text-slate-500">Program:</span>
+                      <span className="text-slate-500">{t.programLabel}:</span>
                       <span className="font-semibold text-[#345BEF]">{selectedCourseObj?.title}</span>
                     </div>
                     <div className="flex justify-between py-1">
-                      <span className="text-slate-500">Self-Assessed Level:</span>
+                      <span className="text-slate-500">{t.levelLabel}:</span>
                       <span className="font-semibold text-[#18243A]">{formData.level}</span>
                     </div>
                     <div className="flex justify-between py-1">
-                      <span className="text-slate-500">Scheduled Slot:</span>
+                      <span className="text-slate-500">{t.slotLabel}:</span>
                       <span className="font-semibold text-[#18243A]">{formData.preferredDate} @ {formData.preferredTime}</span>
                     </div>
                     {formData.goalsNotes && (
                       <div className="pt-2 border-t border-[#18243A]/5">
-                        <span className="text-slate-500 block mb-1">Your Stated Objectives:</span>
+                        <span className="text-slate-500 block mb-1">{t.goalsLabel}:</span>
                         <p className="italic text-slate-600">"{formData.goalsNotes}"</p>
                       </div>
                     )}
@@ -221,14 +244,14 @@ export const BookTrialPage: React.FC = () => {
                       onClick={() => setSubmitted(false)}
                       className="px-6 py-3 rounded-xl bg-[#18243A] hover:bg-[#345BEF] text-white text-xs font-semibold transition-colors"
                     >
-                      Book Another Trial (Demo)
+                      {t.bookAnotherBtn}
                     </button>
                     <Link
                       to="/quiz"
                       className="px-6 py-3 rounded-xl bg-[#FAF8F5] hover:bg-slate-200 text-[#18243A] text-xs font-semibold transition-colors border border-[#18243A]/10 flex items-center gap-1.5"
                     >
                       <Sparkles className="w-3.5 h-3.5 text-[#345BEF]" />
-                      <span>Take English Level Quiz</span>
+                      <span>{t.quizBtn}</span>
                     </Link>
                   </div>
                 </div>
@@ -241,7 +264,7 @@ export const BookTrialPage: React.FC = () => {
                     <div className="flex items-center gap-2 pb-2 border-b border-[#18243A]/10">
                       <User className="w-4 h-4 text-[#345BEF]" />
                       <h3 className="font-serif font-bold text-base text-[#18243A]">
-                        1. Personal Information
+                        {t.step1Title}
                       </h3>
                     </div>
 
@@ -249,7 +272,7 @@ export const BookTrialPage: React.FC = () => {
                       {/* Full Name */}
                       <div className="space-y-1.5">
                         <label htmlFor="fullName" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                          Full Name <span className="text-rose-500">*</span>
+                          {t.fullNameLabel} <span className="text-rose-500">*</span>
                         </label>
                         <input
                           id="fullName"
@@ -267,7 +290,7 @@ export const BookTrialPage: React.FC = () => {
                       {/* Email Address */}
                       <div className="space-y-1.5">
                         <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                          Email Address <span className="text-rose-500">*</span>
+                          {t.emailLabel} <span className="text-rose-500">*</span>
                         </label>
                         <input
                           id="email"
@@ -289,7 +312,7 @@ export const BookTrialPage: React.FC = () => {
                     <div className="flex items-center gap-2 pb-2 border-b border-[#18243A]/10">
                       <BookOpen className="w-4 h-4 text-[#345BEF]" />
                       <h3 className="font-serif font-bold text-base text-[#18243A]">
-                        2. Course of Interest & Estimated Proficiency
+                        {t.step2Title}
                       </h3>
                     </div>
 
@@ -297,7 +320,7 @@ export const BookTrialPage: React.FC = () => {
                       {/* Course */}
                       <div className="space-y-1.5">
                         <label htmlFor="course" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                          Course of Interest <span className="text-rose-500">*</span>
+                          {t.courseLabel} <span className="text-rose-500">*</span>
                         </label>
                         <select
                           id="course"
@@ -316,7 +339,7 @@ export const BookTrialPage: React.FC = () => {
                       {/* Level */}
                       <div className="space-y-1.5">
                         <label htmlFor="level" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                          Estimated Level <span className="text-rose-500">*</span>
+                          {t.levelSelfLabel} <span className="text-rose-500">*</span>
                         </label>
                         <select
                           id="level"
@@ -339,7 +362,7 @@ export const BookTrialPage: React.FC = () => {
                     <div className="flex items-center gap-2 pb-2 border-b border-[#18243A]/10">
                       <CalendarIcon className="w-4 h-4 text-[#345BEF]" />
                       <h3 className="font-serif font-bold text-base text-[#18243A]">
-                        3. Schedule Preference (CET / GMT)
+                        {t.step3Title}
                       </h3>
                     </div>
 
@@ -347,7 +370,7 @@ export const BookTrialPage: React.FC = () => {
                       {/* Date */}
                       <div className="space-y-1.5">
                         <label htmlFor="preferredDate" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                          Preferred Date <span className="text-rose-500">*</span>
+                          {t.dateLabel} <span className="text-rose-500">*</span>
                         </label>
                         <input
                           id="preferredDate"
@@ -367,7 +390,7 @@ export const BookTrialPage: React.FC = () => {
                       {/* Time slot */}
                       <div className="space-y-1.5">
                         <label htmlFor="preferredTime" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                          Time Window (CET) <span className="text-rose-500">*</span>
+                          {t.timeLabel} <span className="text-rose-500">*</span>
                         </label>
                         <select
                           id="preferredTime"
@@ -388,14 +411,14 @@ export const BookTrialPage: React.FC = () => {
                   {/* Step 4: Notes & Goals */}
                   <div className="space-y-1.5 pt-4">
                     <label htmlFor="goalsNotes" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                      Specific Challenges or Goals (Optional)
+                      {t.step4Label}
                     </label>
                     <textarea
                       id="goalsNotes"
                       rows={3}
                       value={formData.goalsNotes}
                       onChange={(e) => setFormData({ ...formData, goalsNotes: e.target.value })}
-                      placeholder="e.g. Preparing for an executive interview in Dublin, or struggling with vocal confidence during team retrospectives..."
+                      placeholder={t.goalsPlaceholder}
                       className="w-full px-4 py-3 rounded-xl bg-[#FAF8F5] border border-[#18243A]/10 text-sm text-[#18243A] placeholder-slate-400 focus:outline-none focus:border-[#345BEF]"
                     />
                   </div>
@@ -408,10 +431,10 @@ export const BookTrialPage: React.FC = () => {
                       className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-[#345BEF] hover:bg-[#2646c7] text-white font-bold text-base transition-all shadow-md disabled:opacity-50"
                     >
                       {isSubmitting ? (
-                        <span>Validating & Confirming...</span>
+                        <span>{t.validatingBtn}</span>
                       ) : (
                         <>
-                          <span>Confirm Demo Trial Booking</span>
+                          <span>{t.confirmBtn}</span>
                           <ArrowRight className="w-4 h-4" />
                         </>
                       )}
@@ -426,13 +449,13 @@ export const BookTrialPage: React.FC = () => {
           <div className="lg:col-span-4 space-y-6">
             <div className="bg-[#18243A] text-white p-7 rounded-3xl border border-white/10 space-y-5">
               <span className="editorial-badge bg-[#F4C96B] text-[#18243A]">
-                The Diagnostic Protocol
+                {t.protocolBadge}
               </span>
               <h3 className="font-serif text-2xl font-bold text-white">
-                What to expect during your 30 minutes
+                {t.protocolTitle}
               </h3>
               <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                Your trial is conducted 1-on-1 via private browser video with an Oxford or Cambridge accredited academic coach.
+                {t.protocolDesc}
               </p>
 
               <div className="space-y-4 pt-2 border-t border-white/10 text-xs">
@@ -441,8 +464,8 @@ export const BookTrialPage: React.FC = () => {
                     1
                   </div>
                   <div>
-                    <div className="font-bold text-white text-sm">Spoken Ease & Flow Audit</div>
-                    <p className="text-slate-300 mt-0.5">A natural conversation on contemporary European news to evaluate spontaneous syntax without notes.</p>
+                    <div className="font-bold text-white text-sm">{t.p1Title}</div>
+                    <p className="text-slate-300 mt-0.5">{t.p1Desc}</p>
                   </div>
                 </div>
 
@@ -451,8 +474,8 @@ export const BookTrialPage: React.FC = () => {
                     2
                   </div>
                   <div>
-                    <div className="font-bold text-white text-sm">Phonological & Rhythm Scan</div>
-                    <p className="text-slate-300 mt-0.5">Identification of native-language interference (vowel lengths, consonant clusters, and syllable timing).</p>
+                    <div className="font-bold text-white text-sm">{t.p2Title}</div>
+                    <p className="text-slate-300 mt-0.5">{t.p2Desc}</p>
                   </div>
                 </div>
 
@@ -461,8 +484,8 @@ export const BookTrialPage: React.FC = () => {
                     3
                   </div>
                   <div>
-                    <div className="font-bold text-white text-sm">90-Day Learning Blueprint</div>
-                    <p className="text-slate-300 mt-0.5">A clear CEFR benchmark score and actionable syllabus recommendation tailored to your professional ambitions.</p>
+                    <div className="font-bold text-white text-sm">{t.p3Title}</div>
+                    <p className="text-slate-300 mt-0.5">{t.p3Desc}</p>
                   </div>
                 </div>
               </div>
@@ -472,10 +495,10 @@ export const BookTrialPage: React.FC = () => {
             <div className="bg-[#E7F0E8] p-6 rounded-3xl border border-[#2F5238]/20 space-y-2">
               <div className="flex items-center gap-2 text-[#2F5238] font-bold text-sm">
                 <ShieldCheck className="w-5 h-5 text-[#2F5238]" />
-                <span>Zero Commercial Commitment</span>
+                <span>{t.riskTitle}</span>
               </div>
               <p className="text-xs text-[#2F5238]/80 leading-relaxed">
-                No credit cards are requested. If you choose not to enroll in a regular cohort afterward, your diagnostic report is yours to keep forever.
+                {t.riskDesc}
               </p>
             </div>
           </div>

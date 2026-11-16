@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ArrowRight, 
   Info 
 } from 'lucide-react';
-import { teachersData } from '../data/teachers';
+import { getTeachers } from '../data/teachers';
 import { TeacherCard } from '../components/TeacherCard';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslations } from '../data/translations';
 
 export const TeachersPage: React.FC = () => {
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>('All');
+  const { language } = useLanguage();
+  const t = getTranslations(language).teachersPage;
+  const teachersData = getTeachers(language);
 
-  const specialties = [
-    'All',
-    'IELTS Preparation (Academic)',
-    'Executive English',
-    'Conversational Ease',
-    'Phonology & Intonation',
-    'General English (Intermediate to Advanced)'
-  ];
+  const specialties = useMemo(() => {
+    const list = new Set<string>();
+    teachersData.forEach((teacher) => {
+      teacher.specialties.forEach((s) => list.add(s));
+    });
+    return ['All', ...Array.from(list).slice(0, 5)];
+  }, [teachersData]);
 
   const filteredTeachers = selectedSpecialty === 'All'
     ? teachersData
-    : teachersData.filter((t) => t.specialties.includes(selectedSpecialty));
+    : teachersData.filter((teacher) => teacher.specialties.includes(selectedSpecialty));
 
   return (
     <div className="pb-24 space-y-16">
@@ -30,13 +34,13 @@ export const TeachersPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-4">
             <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/20">
-              European Faculty Directory
+              {t.badge}
             </span>
             <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#18243A] tracking-tight">
-              Educators who treat language as living craft.
+              {t.title}
             </h1>
             <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
-              Every instructor brings postgraduate linguistic credentials, commercial or examiner experience, and deep empathy for European adult learners.
+              {t.desc}
             </p>
           </div>
         </div>
@@ -51,10 +55,10 @@ export const TeachersPage: React.FC = () => {
             </div>
             <div>
               <h4 className="font-serif text-base font-bold text-white">
-                Fictional Portfolio Demonstration Profiles
+                {t.disclaimerTitle}
               </h4>
               <p className="text-xs text-slate-300 leading-relaxed mt-0.5">
-                The biographies, qualifications, and portraits shown below are realistic fictional profiles created to showcase commercial UI/UX design, filtering, and responsive typography for FluentBridge.
+                {t.disclaimerDesc}
               </p>
             </div>
           </div>
@@ -62,7 +66,7 @@ export const TeachersPage: React.FC = () => {
             to="/book-trial"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#345BEF] hover:bg-[#2646c7] text-white text-xs font-semibold shrink-0 transition-colors"
           >
-            <span>Request Demo Trial</span>
+            <span>{t.requestDemoTrial}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -72,7 +76,7 @@ export const TeachersPage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-[#18243A]/10">
           <span className="text-xs font-bold uppercase tracking-wider text-[#516382] mr-2">
-            Filter Specialty:
+            {t.filterSpecialty}:
           </span>
           {specialties.map((spec) => (
             <button
@@ -84,7 +88,7 @@ export const TeachersPage: React.FC = () => {
                   : 'bg-white text-slate-700 hover:bg-slate-200 border border-[#18243A]/10'
               }`}
             >
-              {spec}
+              {spec === 'All' ? (language === 'ru' ? 'Все специализации' : 'All') : spec}
             </button>
           ))}
         </div>
@@ -102,30 +106,30 @@ export const TeachersPage: React.FC = () => {
         <div className="bg-[#FAF8F5] border border-[#18243A]/10 rounded-3xl p-8 sm:p-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-6 space-y-4">
-              <span className="editorial-badge bg-[#345BEF] text-white">Academic Rigor</span>
+              <span className="editorial-badge bg-[#345BEF] text-white">{t.standardsBadge}</span>
               <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#18243A]">
-                Our 4 Pillars for Selecting Faculty
+                {t.standardsTitle}
               </h3>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                Less than 3% of tutor applicants are admitted to FluentBridge cohorts. We prioritize emotional intelligence, cross-cultural sensitivity, and structured diagnostic feedback over casual conversation.
+                {t.standardsDesc}
               </p>
             </div>
             <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-white p-4 rounded-2xl border border-[#18243A]/5 space-y-1.5">
-                <div className="font-serif font-bold text-sm text-[#18243A]">1. Postgraduate Credentials</div>
-                <p className="text-xs text-slate-500">Cambridge DELTA, Trinity DipTESOL, or Master’s in Applied Linguistics required.</p>
+                <div className="font-serif font-bold text-sm text-[#18243A]">{t.p1Title}</div>
+                <p className="text-xs text-slate-500">{t.p1Desc}</p>
               </div>
               <div className="bg-white p-4 rounded-2xl border border-[#18243A]/5 space-y-1.5">
-                <div className="font-serif font-bold text-sm text-[#18243A]">2. Industry Background</div>
-                <p className="text-xs text-slate-500">Our business coaches have spent years in European consultancies, tech firms, or legal offices.</p>
+                <div className="font-serif font-bold text-sm text-[#18243A]">{t.p2Title}</div>
+                <p className="text-xs text-slate-500">{t.p2Desc}</p>
               </div>
               <div className="bg-white p-4 rounded-2xl border border-[#18243A]/5 space-y-1.5">
-                <div className="font-serif font-bold text-sm text-[#18243A]">3. Acoustic Voice Training</div>
-                <p className="text-xs text-slate-500">Instructors are trained in acoustic phonetics to diagnose subtle European mother-tongue interferences.</p>
+                <div className="font-serif font-bold text-sm text-[#18243A]">{t.p3Title}</div>
+                <p className="text-xs text-slate-500">{t.p3Desc}</p>
               </div>
               <div className="bg-white p-4 rounded-2xl border border-[#18243A]/5 space-y-1.5">
-                <div className="font-serif font-bold text-sm text-[#18243A]">4. Empathy for Multilinguals</div>
-                <p className="text-xs text-slate-500">All tutors speak at least one second language, understanding cognitive fatigue firsthand.</p>
+                <div className="font-serif font-bold text-sm text-[#18243A]">{t.p4Title}</div>
+                <p className="text-xs text-slate-500">{t.p4Desc}</p>
               </div>
             </div>
           </div>

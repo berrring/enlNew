@@ -9,27 +9,35 @@ import {
   Check, 
   ChevronRight 
 } from 'lucide-react';
-import { coursesData } from '../data/courses';
-import { teachersData } from '../data/teachers';
-import { faqsData } from '../data/faqs';
+import { getCourses } from '../data/courses';
+import { getTeachers } from '../data/teachers';
+import { getFaqs } from '../data/faqs';
 import { TeacherCard } from '../components/TeacherCard';
 import { Accordion } from '../components/Accordion';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslations } from '../data/translations';
 
 export const HomePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'classes' | 'mentorship' | 'practical'>('classes');
   const [sampleVoiceActive, setSampleVoiceActive] = useState(false);
+  const { language } = useLanguage();
+  const t = getTranslations(language).home;
+
+  const allCourses = getCourses(language);
+  const allTeachers = getTeachers(language);
+  const faqsData = getFaqs(language);
 
   // Core 4 popular courses
-  const popularCourses = coursesData.filter((c) =>
+  const popularCourses = allCourses.filter((c) =>
     ['general-english', 'conversational-english', 'business-english', 'ielts-preparation'].includes(c.id)
   );
 
   // Featured flagship course for asymmetric display
-  const flagshipCourse = coursesData.find((c) => c.id === 'business-english') || coursesData[0];
+  const flagshipCourse = allCourses.find((c) => c.id === 'business-english') || allCourses[0];
   const sideCourses = popularCourses.filter((c) => c.id !== 'business-english');
 
   // Featured teachers (first 3)
-  const featuredTeachers = teachersData.slice(0, 3);
+  const featuredTeachers = allTeachers.slice(0, 3);
 
   return (
     <div className="space-y-24 sm:space-y-36 pb-24">
@@ -49,17 +57,17 @@ export const HomePage: React.FC = () => {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#345BEF]"></span>
             </span>
             <span className="text-xs font-semibold text-[#18243A]">
-              Next European Cohorts commence Monday
+              {t.statusTicker}
             </span>
             <span className="text-slate-300">|</span>
             <span className="text-xs text-[#516382] font-medium hidden sm:inline">
-              Synchronized CET / GMT
+              CET / GMT
             </span>
             <Link
               to="/courses"
               className="text-xs font-bold text-[#345BEF] hover:underline flex items-center gap-1"
             >
-              <span>View seats</span>
+              <span>{t.viewSeats}</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -70,17 +78,17 @@ export const HomePage: React.FC = () => {
             <div className="lg:col-span-7 space-y-7 sm:space-y-9">
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#E7F0E8] text-[#2F5238] text-[11px] font-bold uppercase tracking-wider">
-                  Academic Online Academy • Western & Central Europe
+                  {t.heroPill}
                 </div>
 
                 <h1 className="font-serif text-5xl sm:text-7xl xl:text-8xl font-bold text-[#18243A] leading-[1.04] tracking-tight">
-                  English that <br />
-                  <span className="italic font-normal text-[#345BEF] underline decoration-[#F4C96B] decoration-wavy decoration-2">takes you</span> further.
+                  {t.heroHeadline1} <br />
+                  <span className="italic font-normal text-[#345BEF] underline decoration-[#F4C96B] decoration-wavy decoration-2">{t.heroHeadlineItalic}</span> {t.heroHeadline2}
                 </h1>
               </div>
 
               <p className="text-lg sm:text-2xl text-[#516382] leading-relaxed max-w-2xl font-light">
-                FluentBridge bridges the gap between textbook grammar and natural, unscripted European executive fluency. Learn in intimate cohorts of max 5 students led by Oxford & Cambridge accredited educators.
+                {t.heroDesc}
               </p>
 
               {/* CTAs */}
@@ -89,7 +97,7 @@ export const HomePage: React.FC = () => {
                   to="/courses"
                   className="inline-flex items-center justify-center gap-2.5 bg-[#345BEF] hover:bg-[#2646c7] text-white px-8 py-4 rounded-2xl text-base font-semibold transition-all duration-200 shadow-md hover:shadow-xl group"
                 >
-                  <span>Explore All Syllabi</span>
+                  <span>{t.exploreSyllabi}</span>
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Link>
 
@@ -98,23 +106,23 @@ export const HomePage: React.FC = () => {
                   className="inline-flex items-center justify-center gap-2.5 bg-white hover:bg-[#FAF8F5] text-[#18243A] px-7 py-4 rounded-2xl text-base font-semibold transition-all duration-200 border border-[#18243A]/15 hover:border-[#18243A]/30 shadow-xs"
                 >
                   <Calendar className="w-5 h-5 text-[#345BEF]" />
-                  <span>Book a Free Trial</span>
+                  <span>{t.bookFreeTrial}</span>
                 </Link>
               </div>
 
               {/* Editorial Stat Strip */}
               <div className="pt-6 border-t border-[#18243A]/10 grid grid-cols-3 gap-6 max-w-lg">
                 <div>
-                  <div className="font-serif text-3xl sm:text-4xl font-bold text-[#18243A]">Max 5</div>
-                  <div className="text-xs text-[#516382] font-medium mt-0.5">Students per salon</div>
+                  <div className="font-serif text-3xl sm:text-4xl font-bold text-[#18243A]">{t.maxStudents}</div>
+                  <div className="text-xs text-[#516382] font-medium mt-0.5">{t.maxStudentsSub}</div>
                 </div>
                 <div>
-                  <div className="font-serif text-3xl sm:text-4xl font-bold text-[#18243A]">70%+</div>
-                  <div className="text-xs text-[#516382] font-medium mt-0.5">Student speaking ratio</div>
+                  <div className="font-serif text-3xl sm:text-4xl font-bold text-[#18243A]">{t.speakingRatio}</div>
+                  <div className="text-xs text-[#516382] font-medium mt-0.5">{t.speakingRatioSub}</div>
                 </div>
                 <div>
-                  <div className="font-serif text-3xl sm:text-4xl font-bold text-[#18243A]">CEFR</div>
-                  <div className="text-xs text-[#516382] font-medium mt-0.5">A2 through C2 levels</div>
+                  <div className="font-serif text-3xl sm:text-4xl font-bold text-[#18243A]">{t.cefrStandard}</div>
+                  <div className="text-xs text-[#516382] font-medium mt-0.5">{t.cefrStandardSub}</div>
                 </div>
               </div>
             </div>
@@ -135,10 +143,10 @@ export const HomePage: React.FC = () => {
                   {/* Student Quote overlay on image */}
                   <div className="absolute bottom-5 left-5 right-5 text-white space-y-1">
                     <p className="font-serif italic text-sm text-slate-200">
-                      "After 4 weeks, I stopped second-guessing myself in executive syncs with our London team."
+                      "{t.studentQuote}"
                     </p>
                     <p className="text-[11px] font-semibold text-[#F4C96B] uppercase tracking-wider">
-                      Elena Rostova — Product Lead, Munich (Demo Student)
+                      {t.studentAuthor}
                     </p>
                   </div>
                 </div>
@@ -147,7 +155,7 @@ export const HomePage: React.FC = () => {
                 <div className="absolute -top-6 -left-6 z-20 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-[#18243A]/10 max-w-[240px] hidden sm:block">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-[#345BEF]">
-                      Acoustic Coaching
+                      {t.acousticCoaching}
                     </span>
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
                   </div>
@@ -161,9 +169,9 @@ export const HomePage: React.FC = () => {
                       <Volume2 className="w-4 h-4 text-[#F4C96B]" />
                     </button>
                     <div>
-                      <div className="text-xs font-bold text-[#18243A]">Vocal Stress Drill</div>
+                      <div className="text-xs font-bold text-[#18243A]">{t.vocalStressDrill}</div>
                       <div className="text-[11px] text-[#516382]">
-                        {sampleVoiceActive ? 'Playing demo...' : 'Click to preview (30s)'}
+                        {sampleVoiceActive ? t.playingDemo : t.clickPreview}
                       </div>
                     </div>
                   </div>
@@ -173,16 +181,16 @@ export const HomePage: React.FC = () => {
                 <div className="absolute -bottom-6 -right-6 z-20 bg-[#FAF8F5] p-5 rounded-2xl shadow-xl border border-[#18243A]/15 max-w-[250px] text-[#18243A]">
                   <div className="flex items-center gap-2 mb-1.5">
                     <Sparkles className="w-4 h-4 text-[#345BEF]" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Unsure of your level?</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">{t.unsureLevel}</span>
                   </div>
                   <p className="text-xs text-[#516382] mb-3 leading-relaxed">
-                    Take our 5-minute diagnostic quiz for an immediate CEFR estimate.
+                    {t.quizPrompt}
                   </p>
                   <Link
                     to="/quiz"
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-[#345BEF] hover:underline"
                   >
-                    <span>Start Level Quiz</span>
+                    <span>{t.startQuiz}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
@@ -203,15 +211,15 @@ export const HomePage: React.FC = () => {
             {/* Left Magazine Column: Bold Thesis & Candid Photography */}
             <div className="lg:col-span-5 space-y-6">
               <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/30">
-                The FluentBridge Method
+                {t.methodBadge}
               </span>
 
               <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#18243A] tracking-tight leading-tight">
-                Designed for adults who already know grammar rules, but freeze when it's time to speak.
+                {t.methodHeadline}
               </h2>
 
               <p className="text-slate-600 text-base leading-relaxed">
-                Conventional language courses treat English as an academic math puzzle. We treat it as an embodied communicative reflex practiced under realistic international conditions.
+                {t.methodDesc}
               </p>
 
               <div className="rounded-2xl overflow-hidden border border-[#18243A]/10 shadow-sm aspect-[4/3] relative">
@@ -221,7 +229,7 @@ export const HomePage: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute bottom-3 left-3 bg-[#18243A]/90 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm">
-                  London & Oxford Faculty Mentorship
+                  {t.methodPhotoCaption}
                 </div>
               </div>
             </div>
@@ -233,13 +241,13 @@ export const HomePage: React.FC = () => {
               <div className="bg-white p-6 sm:p-7 rounded-2xl border border-[#18243A]/10 space-y-2 card-hover-lift">
                 <div className="flex items-center justify-between">
                   <span className="font-serif text-xl font-bold text-[#345BEF]">01</span>
-                  <span className="text-xs uppercase font-bold tracking-wider text-[#516382]">Synchronized CET Timetable</span>
+                  <span className="text-xs uppercase font-bold tracking-wider text-[#516382]">{t.pillar1Tag}</span>
                 </div>
                 <h3 className="font-serif text-xl font-bold text-[#18243A]">
-                  Flexible classes tailored to your professional rhythm
+                  {t.pillar1Title}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  Join early morning sprints (07:30 CET), lunchtime express sessions, or evening conversation salons. Never sacrifice your workday for personal development.
+                  {t.pillar1Desc}
                 </p>
               </div>
 
@@ -247,13 +255,13 @@ export const HomePage: React.FC = () => {
               <div className="bg-white p-6 sm:p-7 rounded-2xl border border-[#18243A]/10 space-y-2 card-hover-lift">
                 <div className="flex items-center justify-between">
                   <span className="font-serif text-xl font-bold text-[#2F5238]">02</span>
-                  <span className="text-xs uppercase font-bold tracking-wider text-[#516382]">Cambridge DELTA Faculty</span>
+                  <span className="text-xs uppercase font-bold tracking-wider text-[#516382]">{t.pillar2Tag}</span>
                 </div>
                 <h3 className="font-serif text-xl font-bold text-[#18243A]">
-                  Accredited educators with real commercial experience
+                  {t.pillar2Title}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  Our instructors hold Master's degrees from Oxford and Cambridge, with corporate backgrounds in London, Zurich, and Amsterdam. No casual chat partners.
+                  {t.pillar2Desc}
                 </p>
               </div>
 
@@ -261,13 +269,13 @@ export const HomePage: React.FC = () => {
               <div className="bg-white p-6 sm:p-7 rounded-2xl border border-[#18243A]/10 space-y-2 card-hover-lift">
                 <div className="flex items-center justify-between">
                   <span className="font-serif text-xl font-bold text-[#9A731E]">03</span>
-                  <span className="text-xs uppercase font-bold tracking-wider text-[#516382]">70%+ Spoken Interaction</span>
+                  <span className="text-xs uppercase font-bold tracking-wider text-[#516382]">{t.pillar3Tag}</span>
                 </div>
                 <h3 className="font-serif text-xl font-bold text-[#18243A]">
-                  Active debate rather than passive lecture attendance
+                  {t.pillar3Title}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  With a maximum of 5 students per cohort, tutors act as conversational directors, keeping the spotlight on unscripted debate, storytelling, and persuasion.
+                  {t.pillar3Desc}
                 </p>
               </div>
 
@@ -275,13 +283,13 @@ export const HomePage: React.FC = () => {
               <div className="bg-white p-6 sm:p-7 rounded-2xl border border-[#18243A]/10 space-y-2 card-hover-lift">
                 <div className="flex items-center justify-between">
                   <span className="font-serif text-xl font-bold text-[#345BEF]">04</span>
-                  <span className="text-xs uppercase font-bold tracking-wider text-[#516382]">Continuous Calibration</span>
+                  <span className="text-xs uppercase font-bold tracking-wider text-[#516382]">{t.pillar4Tag}</span>
                 </div>
                 <h3 className="font-serif text-xl font-bold text-[#18243A]">
-                  Personalized diagnostic voice notes after every session
+                  {t.pillar4Title}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  Receive actionable syntax feedback, pronunciation adjustments, and curated idiom decks in your private student portal within 2 hours of each class.
+                  {t.pillar4Desc}
                 </p>
               </div>
             </div>
@@ -294,13 +302,13 @@ export const HomePage: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#18243A]/10 pb-6">
           <div className="space-y-3">
             <span className="editorial-badge bg-[#F4C96B]/25 text-[#18243A] border border-[#F4C96B]/40">
-              Curated Academic Programs
+              {t.coursesBadge}
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#18243A] tracking-tight">
-              Featured Course Syllabi
+              {t.coursesTitle}
             </h2>
             <p className="text-[#516382] text-base max-w-xl">
-              Intimate cohorts and dedicated 1-on-1 mentorship programs structured around high-stakes European communication.
+              {t.coursesDesc}
             </p>
           </div>
 
@@ -308,7 +316,7 @@ export const HomePage: React.FC = () => {
             to="/courses"
             className="inline-flex items-center gap-2 text-[#345BEF] hover:text-[#2646c7] font-semibold text-base group self-start md:self-end"
           >
-            <span>View All 6 Courses & Filters</span>
+            <span>{t.viewAllCoursesBtn}</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
@@ -323,10 +331,10 @@ export const HomePage: React.FC = () => {
             <div className="space-y-6 relative z-10">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className="editorial-badge bg-[#F4C96B] text-[#18243A]">
-                  Flagship Program
+                  {t.flagshipBadge}
                 </span>
                 <span className="text-xs text-slate-300 font-medium">
-                  {flagshipCourse.format} • Level: {flagshipCourse.level}
+                  {flagshipCourse.format} • {language === 'ru' ? 'Уровень' : 'Level'}: {flagshipCourse.level}
                 </span>
               </div>
 
@@ -342,7 +350,7 @@ export const HomePage: React.FC = () => {
               {/* Learning outcomes preview */}
               <div className="space-y-2.5 pt-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#F4C96B]">
-                  Core Executive Capabilities:
+                  {t.coreCapabilities}
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
                   {flagshipCourse.learningOutcomes.slice(0, 4).map((outcome, idx) => (
@@ -358,11 +366,11 @@ export const HomePage: React.FC = () => {
             <div className="pt-8 mt-8 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 relative z-10">
               <div>
                 <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
-                  Indicative Tuition
+                  {t.indicativeTuition}
                 </span>
                 <div className="flex items-baseline gap-1">
                   <span className="font-serif text-3xl font-bold text-white">€{flagshipCourse.indicativePrice}</span>
-                  <span className="text-xs text-slate-400">/ month</span>
+                  <span className="text-xs text-slate-400">{t.perMonth}</span>
                 </div>
               </div>
 
@@ -371,7 +379,7 @@ export const HomePage: React.FC = () => {
                   to={`/courses/${flagshipCourse.slug}`}
                   className="inline-flex items-center gap-2 bg-[#345BEF] hover:bg-[#2646c7] text-white px-6 py-3 rounded-xl font-bold text-sm transition-colors shadow-md"
                 >
-                  <span>Explore Full Syllabus</span>
+                  <span>{t.exploreFullSyllabus}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -389,7 +397,7 @@ export const HomePage: React.FC = () => {
                   <div className="flex items-center justify-between text-xs text-[#516382] mb-1.5">
                     <span className="font-semibold text-[#18243A]">{c.category}</span>
                     <span className="bg-[#FAF8F5] px-2.5 py-0.5 rounded-full border border-[#18243A]/10 font-medium">
-                      Level: {c.level}
+                      {language === 'ru' ? 'Уровень' : 'Level'}: {c.level}
                     </span>
                   </div>
                   <h4 className="font-serif text-lg font-bold text-[#18243A]">
@@ -404,13 +412,13 @@ export const HomePage: React.FC = () => {
 
                 <div className="pt-3 mt-3 border-t border-[#18243A]/5 flex items-center justify-between">
                   <span className="font-serif font-bold text-base text-[#18243A]">
-                    €{c.indicativePrice} <span className="text-xs text-slate-500 font-normal">/ mo</span>
+                    €{c.indicativePrice} <span className="text-xs text-slate-500 font-normal">{t.perMonth}</span>
                   </span>
                   <Link
                     to={`/courses/${c.slug}`}
                     className="text-xs font-bold text-[#345BEF] hover:underline flex items-center gap-1"
                   >
-                    <span>View course</span>
+                    <span>{t.viewCourse}</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
@@ -425,13 +433,13 @@ export const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-16">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="editorial-badge bg-white/10 text-[#F4C96B] border border-white/15">
-              The Student Journey
+              {t.roadmapBadge}
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              From your initial diagnostic to effortless fluency.
+              {t.roadmapTitle}
             </h2>
             <p className="text-slate-300 text-base sm:text-lg">
-              A clear, predictable roadmap tailored to adult learners balancing careers and university schedules.
+              {t.roadmapDesc}
             </p>
           </div>
 
@@ -442,16 +450,16 @@ export const HomePage: React.FC = () => {
                 <div className="w-10 h-10 rounded-xl bg-[#345BEF] text-white font-serif text-lg font-bold flex items-center justify-center">
                   01
                 </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#F4C96B]">Step One</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#F4C96B]">{t.step1Tag}</span>
               </div>
               <h3 className="font-serif text-xl font-bold text-white">
-                Choose your course
+                {t.step1Title}
               </h3>
               <p className="text-slate-300 text-sm leading-relaxed">
-                Select between General Fluency, Conversational salons, Executive Business, or targeted IELTS preparation based on your immediate milestones.
+                {t.step1Desc}
               </p>
               <div className="pt-2 text-xs text-slate-400 font-medium">
-                Deliverable: Customized syllabus alignment
+                {t.step1Output}
               </div>
             </div>
 
@@ -461,16 +469,16 @@ export const HomePage: React.FC = () => {
                 <div className="w-10 h-10 rounded-xl bg-[#F4C96B] text-[#18243A] font-serif text-lg font-bold flex items-center justify-center">
                   02
                 </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#F4C96B]">Step Two</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#F4C96B]">{t.step2Tag}</span>
               </div>
               <h3 className="font-serif text-xl font-bold text-white">
-                Find your learning level
+                {t.step2Title}
               </h3>
               <p className="text-slate-300 text-sm leading-relaxed">
-                Complete our fast 5-minute CEFR placement quiz or book a 1-on-1 diagnostic trial with an academic coach to evaluate your pronunciation and speech flow.
+                {t.step2Desc}
               </p>
               <div className="pt-2 text-xs text-slate-400 font-medium">
-                Deliverable: Benchmark CEFR rating
+                {t.step2Output}
               </div>
             </div>
 
@@ -480,16 +488,16 @@ export const HomePage: React.FC = () => {
                 <div className="w-10 h-10 rounded-xl bg-[#E7F0E8] text-[#2F5238] font-serif text-lg font-bold flex items-center justify-center">
                   03
                 </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#F4C96B]">Step Three</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#F4C96B]">{t.step3Tag}</span>
               </div>
               <h3 className="font-serif text-xl font-bold text-white">
-                Start learning
+                {t.step3Title}
               </h3>
               <p className="text-slate-300 text-sm leading-relaxed">
-                Join your intimate cohort (max 5 students) or meet your dedicated private mentor at your preferred time window (CET / GMT).
+                {t.step3Desc}
               </p>
               <div className="pt-2 text-xs text-slate-400 font-medium">
-                Deliverable: High speaking ratio sessions
+                {t.step3Output}
               </div>
             </div>
 
@@ -499,16 +507,16 @@ export const HomePage: React.FC = () => {
                 <div className="w-10 h-10 rounded-xl bg-white text-[#18243A] font-serif text-lg font-bold flex items-center justify-center">
                   04
                 </div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#F4C96B]">Step Four</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#F4C96B]">{t.step4Tag}</span>
               </div>
               <h3 className="font-serif text-xl font-bold text-white">
-                Track your progress
+                {t.step4Title}
               </h3>
               <p className="text-slate-300 text-sm leading-relaxed">
-                Review interactive transcripts, diagnostic error blueprints, and receive verifiable CEFR competency progress reports.
+                {t.step4Desc}
               </p>
               <div className="pt-2 text-xs text-slate-400 font-medium">
-                Deliverable: Verifiable CEFR Certificate
+                {t.step4Output}
               </div>
             </div>
           </div>
@@ -518,7 +526,7 @@ export const HomePage: React.FC = () => {
               to="/book-trial"
               className="inline-flex items-center gap-2.5 bg-[#F4C96B] hover:bg-[#e6bb59] text-[#18243A] px-8 py-4 rounded-2xl text-base font-bold transition-all shadow-md group"
             >
-              <span>Schedule Your Free Diagnostic Step</span>
+              <span>{t.scheduleDiagnosticBtn}</span>
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
@@ -529,13 +537,13 @@ export const HomePage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-4">
           <span className="editorial-badge bg-[#FAF8F5] text-[#516382] border border-[#18243A]/10">
-            Inside The Salon
+            {t.insideSalonBadge}
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#18243A] tracking-tight">
-            The FluentBridge Experience.
+            {t.insideSalonTitle}
           </h2>
           <p className="text-[#516382] text-base sm:text-lg">
-            A look into how our live virtual seminars, diagnostic feedback loop, and practical simulation exercises combine.
+            {t.insideSalonDesc}
           </p>
         </div>
 
@@ -550,7 +558,7 @@ export const HomePage: React.FC = () => {
                   : 'text-[#516382] hover:text-[#18243A]'
               }`}
             >
-              1. Live Virtual Salons
+              {t.tab1}
             </button>
             <button
               onClick={() => setActiveTab('mentorship')}
@@ -560,7 +568,7 @@ export const HomePage: React.FC = () => {
                   : 'text-[#516382] hover:text-[#18243A]'
               }`}
             >
-              2. Diagnostic Mentorship
+              {t.tab2}
             </button>
             <button
               onClick={() => setActiveTab('practical')}
@@ -570,7 +578,7 @@ export const HomePage: React.FC = () => {
                   : 'text-[#516382] hover:text-[#18243A]'
               }`}
             >
-              3. Real-World Simulations
+              {t.tab3}
             </button>
           </div>
         </div>
@@ -581,26 +589,26 @@ export const HomePage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-6 space-y-5">
                 <span className="editorial-badge bg-[#EEF2FD] text-[#345BEF]">
-                  Intimate Cohorts
+                  {t.tab1Badge}
                 </span>
                 <h3 className="font-serif text-2xl sm:text-4xl font-bold text-[#18243A]">
-                  Never hide in the back row of a crowded webinar.
+                  {t.tab1Title}
                 </h3>
                 <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                  Every class has a strict cap of 3 to 5 students. Tutors do not lecture; they facilitate vigorous, engaging debate, ask probing questions, and invite every participant to voice complex opinions.
+                  {t.tab1Desc}
                 </p>
                 <ul className="space-y-3 text-sm text-slate-700">
                   <li className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#345BEF]" />
-                    <span>Synchronized across CET/GMT to match your workday rhythm</span>
+                    <span>{t.tab1P1}</span>
                   </li>
                   <li className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#345BEF]" />
-                    <span>Curated reading articles from FT, Economist, and The Guardian</span>
+                    <span>{t.tab1P2}</span>
                   </li>
                   <li className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#345BEF]" />
-                    <span>Interactive digital whiteboard for collaborative lexical mapping</span>
+                    <span>{t.tab1P3}</span>
                   </li>
                 </ul>
               </div>
@@ -612,7 +620,7 @@ export const HomePage: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute bottom-3 left-3 bg-[#18243A]/90 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm">
-                    Live Session: European Tech Governance Debate
+                    {t.tab1Caption}
                   </div>
                 </div>
               </div>
@@ -623,26 +631,26 @@ export const HomePage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-6 space-y-5">
                 <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238]">
-                  Personalized Feedback Loop
+                  {t.tab2Badge}
                 </span>
                 <h3 className="font-serif text-2xl sm:text-4xl font-bold text-[#18243A]">
-                  Diagnostic voice notes and syntax audits.
+                  {t.tab2Title}
                 </h3>
                 <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                  Learning does not stop when you log off Zoom. Your tutor reviews your session recordings and sends you a personalized error blueprint highlighting fossilized mistakes, pronunciation stress errors, and suggested native idioms.
+                  {t.tab2Desc}
                 </p>
                 <ul className="space-y-3 text-sm text-slate-700">
                   <li className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#2F5238]" />
-                    <span>Acoustic waveform analysis of vowel clarity and connected speech</span>
+                    <span>{t.tab2P1}</span>
                   </li>
                   <li className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#2F5238]" />
-                    <span>Bring real client proposals or academic abstracts for redlining</span>
+                    <span>{t.tab2P2}</span>
                   </li>
                   <li className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#2F5238]" />
-                    <span>Quarterly CEFR audit tracking active vocabulary expansion</span>
+                    <span>{t.tab2P3}</span>
                   </li>
                 </ul>
               </div>
@@ -654,7 +662,7 @@ export const HomePage: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute bottom-3 left-3 bg-[#18243A]/90 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm">
-                    Diagnostic Clinic: Acoustic waveform and rhythm analysis
+                    {t.tab2Caption}
                   </div>
                 </div>
               </div>
@@ -665,26 +673,26 @@ export const HomePage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-6 space-y-5">
                 <span className="editorial-badge bg-[#FDF7E7] text-[#18243A]">
-                  Simulated Reality
+                  {t.tab3Badge}
                 </span>
                 <h3 className="font-serif text-2xl sm:text-4xl font-bold text-[#18243A]">
-                  From cocktail party banter to boardroom grilling.
+                  {t.tab3Title}
                 </h3>
                 <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                  We prepare you for the unpredictable realities of European life: defending an architecture choice during a tense standup, delivering a warm wedding toast in Edinburgh, or holding your ground in commercial negotiations.
+                  {t.tab3Desc}
                 </p>
                 <ul className="space-y-3 text-sm text-slate-700">
                   <li className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#F4C96B]" />
-                    <span>Harvard Project negotiation simulations with peer counter-offers</span>
+                    <span>{t.tab3P1}</span>
                   </li>
                   <li className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#F4C96B]" />
-                    <span>Spontaneous 2-minute impromptu speaking drills under pressure</span>
+                    <span>{t.tab3P2}</span>
                   </li>
                   <li className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#F4C96B]" />
-                    <span>Deconstructing cultural subtexts between British, US & EU business styles</span>
+                    <span>{t.tab3P3}</span>
                   </li>
                 </ul>
               </div>
@@ -696,7 +704,7 @@ export const HomePage: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute bottom-3 left-3 bg-[#18243A]/90 text-white text-xs px-3 py-1.5 rounded-lg backdrop-blur-sm">
-                    Simulation: High-stakes partner pitch and cross-examination
+                    {t.tab3Caption}
                   </div>
                 </div>
               </div>
@@ -710,13 +718,13 @@ export const HomePage: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#18243A]/10 pb-6">
           <div className="space-y-3">
             <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/20">
-              Selected Faculty Spotlight
+              {t.teachersBadge}
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#18243A] tracking-tight">
-              Meet Our Educators
+              {t.teachersTitle}
             </h2>
             <p className="text-[#516382] text-base max-w-xl">
-              Postgraduate linguists, ex-IELTS examiners, and corporate strategists who understand how European adults actually acquire confidence.
+              {t.teachersDesc}
             </p>
           </div>
 
@@ -724,7 +732,7 @@ export const HomePage: React.FC = () => {
             to="/teachers"
             className="inline-flex items-center gap-2 text-[#345BEF] hover:text-[#2646c7] font-semibold text-base group self-start md:self-end"
           >
-            <span>View Full Faculty Directory</span>
+            <span>{t.viewAllFaculty}</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
@@ -741,13 +749,13 @@ export const HomePage: React.FC = () => {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="text-center space-y-4">
           <span className="editorial-badge bg-[#FAF8F5] text-[#516382] border border-[#18243A]/10">
-            Common Questions
+            {t.faqBadge}
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#18243A] tracking-tight">
-            Frequently Asked Questions
+            {t.faqTitle}
           </h2>
           <p className="text-[#516382] text-base">
-            Everything you need to know about our cohorts, scheduling, European timezone sync, and free trial lesson.
+            {t.faqDesc}
           </p>
         </div>
 
@@ -755,13 +763,13 @@ export const HomePage: React.FC = () => {
 
         <div className="text-center pt-2">
           <p className="text-sm text-slate-500 mb-2">
-            Have a specific scheduling inquiry or employer sponsorship question?
+            {t.faqContactPrompt}
           </p>
           <Link
             to="/contact"
             className="inline-flex items-center gap-1.5 text-[#345BEF] font-semibold text-sm hover:underline"
           >
-            <span>Ask our academic admissions team</span>
+            <span>{t.faqContactLink}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -775,13 +783,13 @@ export const HomePage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             <div className="lg:col-span-8 space-y-4">
               <span className="editorial-badge bg-[#345BEF] text-white">
-                Next Cohorts Starting Soon
+                {t.ctaBadge}
               </span>
               <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#18243A] tracking-tight leading-tight">
-                Ready to speak English with the fluency and authority you possess in your native language?
+                {t.ctaHeadline}
               </h2>
               <p className="text-slate-600 text-base sm:text-lg max-w-2xl leading-relaxed">
-                Book a 30-minute diagnostic trial with an academic coach. We will assess your speech rhythm, uncover your false friends, and construct a bespoke plan.
+                {t.ctaDesc}
               </p>
             </div>
 
@@ -790,7 +798,7 @@ export const HomePage: React.FC = () => {
                 to="/book-trial"
                 className="inline-flex items-center justify-center gap-2 bg-[#345BEF] hover:bg-[#2646c7] text-white px-8 py-4 rounded-2xl font-bold text-base transition-all shadow-md group text-center"
               >
-                <span>Book a Free Trial</span>
+                <span>{t.ctaBookBtn}</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
 
@@ -799,7 +807,7 @@ export const HomePage: React.FC = () => {
                 className="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-[#18243A] px-7 py-4 rounded-2xl font-semibold text-base transition-all border border-[#18243A]/15 text-center"
               >
                 <Sparkles className="w-4 h-4 text-[#345BEF]" />
-                <span>Estimate Level (5m)</span>
+                <span>{t.ctaQuizBtn}</span>
               </Link>
             </div>
           </div>

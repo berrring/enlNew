@@ -11,6 +11,8 @@ import {
   Sparkles, 
   ArrowRight 
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslations } from '../data/translations';
 
 interface FormState {
   fullName: string;
@@ -28,11 +30,14 @@ interface ErrorsState {
 }
 
 export const ContactPage: React.FC = () => {
+  const { language } = useLanguage();
+  const t = getTranslations(language).contactPage;
+
   const [formData, setFormData] = useState<FormState>({
     fullName: '',
     email: '',
     subject: '',
-    inquiryType: 'General Admissions',
+    inquiryType: language === 'ru' ? 'Общие вопросы поступления' : 'General Admissions',
     message: ''
   });
 
@@ -44,25 +49,25 @@ export const ContactPage: React.FC = () => {
     const newErrors: ErrorsState = {};
 
     if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Please enter your full name.';
+      newErrors.fullName = language === 'ru' ? 'Пожалуйста, введите ваше имя.' : 'Please enter your full name.';
     } else if (formData.fullName.trim().length < 2) {
-      newErrors.fullName = 'Name must be at least 2 characters.';
+      newErrors.fullName = language === 'ru' ? 'Имя должно содержать минимум 2 символа.' : 'Name must be at least 2 characters.';
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Please provide an email address.';
+      newErrors.email = language === 'ru' ? 'Укажите email адрес.' : 'Please provide an email address.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please provide a valid email format (e.g., name@domain.com).';
+      newErrors.email = language === 'ru' ? 'Неверный формат email (например, name@domain.com).' : 'Please provide a valid email format (e.g., name@domain.com).';
     }
 
     if (!formData.subject.trim()) {
-      newErrors.subject = 'Please provide an inquiry subject.';
+      newErrors.subject = language === 'ru' ? 'Пожалуйста, укажите тему обращения.' : 'Please provide an inquiry subject.';
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = 'Please write your message or question.';
+      newErrors.message = language === 'ru' ? 'Пожалуйста, напишите ваше сообщение.' : 'Please write your message or question.';
     } else if (formData.message.trim().length < 15) {
-      newErrors.message = 'Please provide at least 15 characters so we can understand your goal.';
+      newErrors.message = language === 'ru' ? 'Минимум 15 символов, чтобы мы могли понять ваш запрос.' : 'Please provide at least 15 characters so we can understand your goal.';
     }
 
     setErrors(newErrors);
@@ -86,7 +91,7 @@ export const ContactPage: React.FC = () => {
       fullName: '',
       email: '',
       subject: '',
-      inquiryType: 'General Admissions',
+      inquiryType: language === 'ru' ? 'Общие вопросы поступления' : 'General Admissions',
       message: ''
     });
     setErrors({});
@@ -100,13 +105,13 @@ export const ContactPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-4">
             <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238] border border-[#2F5238]/20">
-              European Admissions & Inquiries
+              {t.badge}
             </span>
             <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#18243A] tracking-tight">
-              Get in touch with our academic team.
+              {t.title}
             </h1>
             <p className="text-slate-600 text-lg sm:text-xl leading-relaxed">
-              Have questions regarding placement, schedule coordination in your time zone, or employer tuition sponsorship? We are here to help.
+              {t.desc}
             </p>
           </div>
         </div>
@@ -124,7 +129,7 @@ export const ContactPage: React.FC = () => {
               <div className="bg-[#FAF8F5] border border-[#18243A]/10 p-4 rounded-2xl flex items-start gap-3 text-xs text-[#516382]">
                 <Info className="w-4 h-4 text-[#345BEF] shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-[#18243A]">Interactive Portfolio Showcase:</strong> This form includes full live validation and simulated delivery feedback. No live message is sent to an external business.
+                  <strong className="text-[#18243A]">{t.demoNoticeTitle}:</strong> {t.demoNoticeDesc}
                 </div>
               </div>
 
@@ -136,21 +141,21 @@ export const ContactPage: React.FC = () => {
                   </div>
                   <div className="space-y-2">
                     <span className="editorial-badge bg-[#E7F0E8] text-[#2F5238]">
-                      Demo Submission Successful
+                      {t.successTitle}
                     </span>
                     <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#18243A]">
-                      Thank you, {formData.fullName}!
+                      {language === 'ru' ? `Спасибо, ${formData.fullName}!` : `Thank you, ${formData.fullName}!`}
                     </h3>
                     <p className="text-slate-600 text-sm max-w-md mx-auto leading-relaxed">
-                      In a production deployment, this inquiry regarding <strong>"{formData.subject}"</strong> would be routed to the FluentBridge European admissions desk at <em>admissions@fluentbridge-demo.eu</em>.
+                      {t.successDesc}
                     </p>
                   </div>
 
                   <div className="bg-[#FAF8F5] p-5 rounded-2xl text-left text-xs text-slate-700 max-w-md mx-auto space-y-1.5 border border-[#18243A]/5">
-                    <div><strong>Simulated Contact Details:</strong></div>
+                    <div><strong>{t.simulatedDetailsTitle}:</strong></div>
                     <div>Email: {formData.email}</div>
-                    <div>Inquiry Area: {formData.inquiryType}</div>
-                    <div>Estimated Response Window: Within 24 hours (CET)</div>
+                    <div>{t.topicLabel}: {formData.inquiryType}</div>
+                    <div>{t.estResponse}</div>
                   </div>
 
                   <div className="pt-4 flex justify-center gap-3">
@@ -158,7 +163,7 @@ export const ContactPage: React.FC = () => {
                       onClick={resetForm}
                       className="px-6 py-2.5 rounded-xl bg-[#18243A] hover:bg-[#345BEF] text-white text-xs font-semibold transition-colors"
                     >
-                      Send Another Message
+                      {t.sendAnotherBtn}
                     </button>
                   </div>
                 </div>
@@ -168,7 +173,7 @@ export const ContactPage: React.FC = () => {
                   {/* Full Name */}
                   <div className="space-y-1.5">
                     <label htmlFor="fullName" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                      Full Name <span className="text-rose-500">*</span>
+                      {t.fullNameLabel} <span className="text-rose-500">*</span>
                     </label>
                     <input
                       id="fullName"
@@ -188,7 +193,7 @@ export const ContactPage: React.FC = () => {
                   {/* Email Address */}
                   <div className="space-y-1.5">
                     <label htmlFor="email" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                      Email Address <span className="text-rose-500">*</span>
+                      {t.emailLabel} <span className="text-rose-500">*</span>
                     </label>
                     <input
                       id="email"
@@ -209,7 +214,7 @@ export const ContactPage: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label htmlFor="inquiryType" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                        Inquiry Topic
+                        {t.topicLabel}
                       </label>
                       <select
                         id="inquiryType"
@@ -217,17 +222,29 @@ export const ContactPage: React.FC = () => {
                         onChange={(e) => setFormData({ ...formData, inquiryType: e.target.value })}
                         className="w-full px-4 py-3 rounded-xl bg-[#FAF8F5] border border-[#18243A]/10 text-sm text-[#18243A] focus:outline-none focus:border-[#345BEF] focus:ring-1 focus:ring-[#345BEF]"
                       >
-                        <option value="General Admissions">General Admissions</option>
-                        <option value="Corporate / Employer Sponsorship">Corporate / Employer Sponsorship</option>
-                        <option value="Executive Coaching">Executive 1-on-1 Coaching</option>
-                        <option value="IELTS Exam Preparation">IELTS Exam Preparation</option>
-                        <option value="Timetable & CET Scheduling">Timetable & CET Scheduling</option>
+                        {language === 'ru' ? (
+                          <>
+                            <option value="Общие вопросы поступления">Общие вопросы поступления</option>
+                            <option value="Корпоративное обучение">Корпоративное обучение и компенсация</option>
+                            <option value="Индивидуальный коучинг">Индивидуальный коучинг для руководителей</option>
+                            <option value="Подготовка к IELTS">Подготовка к IELTS Academic</option>
+                            <option value="Расписание и таймзоны CET">Расписание и таймзоны CET / GMT</option>
+                          </>
+                        ) : (
+                          <>
+                            <option value="General Admissions">General Admissions</option>
+                            <option value="Corporate / Employer Sponsorship">Corporate / Employer Sponsorship</option>
+                            <option value="Executive Coaching">Executive 1-on-1 Coaching</option>
+                            <option value="IELTS Exam Preparation">IELTS Exam Preparation</option>
+                            <option value="Timetable & CET Scheduling">Timetable & CET Scheduling</option>
+                          </>
+                        )}
                       </select>
                     </div>
 
                     <div className="space-y-1.5">
                       <label htmlFor="subject" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                        Subject <span className="text-rose-500">*</span>
+                        {t.subjectLabel} <span className="text-rose-500">*</span>
                       </label>
                       <input
                         id="subject"
@@ -248,14 +265,14 @@ export const ContactPage: React.FC = () => {
                   {/* Message */}
                   <div className="space-y-1.5">
                     <label htmlFor="message" className="block text-xs font-bold uppercase tracking-wider text-[#18243A]">
-                      Your Message <span className="text-rose-500">*</span>
+                      {t.messageLabel} <span className="text-rose-500">*</span>
                     </label>
                     <textarea
                       id="message"
                       rows={5}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Tell us about your current English level, learning goals, or preferred schedule..."
+                      placeholder={language === 'ru' ? 'Расскажите о вашем текущем уровне, целях обучения или удобном графике...' : 'Tell us about your current English level, learning goals, or preferred schedule...'}
                       className={`w-full px-4 py-3 rounded-xl bg-[#FAF8F5] border text-sm text-[#18243A] placeholder-slate-400 focus:outline-none transition-colors resize-y ${
                         errors.message ? 'border-rose-400 bg-rose-50/20' : 'border-[#18243A]/10 focus:border-[#345BEF] focus:ring-1 focus:ring-[#345BEF]'
                       }`}
@@ -273,10 +290,10 @@ export const ContactPage: React.FC = () => {
                       className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-[#345BEF] hover:bg-[#2646c7] text-white font-bold text-sm transition-all shadow-md disabled:opacity-50"
                     >
                       {isSubmitting ? (
-                        <span>Simulating Send...</span>
+                        <span>{t.simulatingBtn}</span>
                       ) : (
                         <>
-                          <span>Submit Demo Inquiry</span>
+                          <span>{t.submitBtn}</span>
                           <Send className="w-4 h-4" />
                         </>
                       )}
@@ -291,20 +308,20 @@ export const ContactPage: React.FC = () => {
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-[#18243A] text-white p-8 rounded-3xl border border-white/10 space-y-6">
               <span className="editorial-badge bg-[#F4C96B] text-[#18243A]">
-                European Study Centers
+                {t.centersBadge}
               </span>
               <h3 className="font-serif text-2xl font-bold text-white">
-                Contact & Timezone Coordination
+                {t.centersTitle}
               </h3>
               <p className="text-slate-300 text-sm leading-relaxed">
-                Our educational advisory team responds to inquiries throughout the Central European business day (08:30 – 18:30 CET).
+                {t.centersDesc}
               </p>
 
               <div className="space-y-4 pt-2 border-t border-white/10 text-xs">
                 <div className="flex items-start gap-3">
                   <MapPin className="w-4 h-4 text-[#F4C96B] shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-bold text-white text-sm">Simulated European Headquarters</div>
+                    <div className="font-bold text-white text-sm">{t.simHeadquarters}</div>
                     <div className="text-slate-300 mt-0.5">Herengracht 450, 1017 CA Amsterdam, Netherlands</div>
                   </div>
                 </div>
@@ -312,7 +329,7 @@ export const ContactPage: React.FC = () => {
                 <div className="flex items-start gap-3">
                   <Mail className="w-4 h-4 text-[#345BEF] shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-bold text-white text-sm">Admissions Office</div>
+                    <div className="font-bold text-white text-sm">{t.admissionsOffice}</div>
                     <div className="text-slate-300 mt-0.5">admissions@fluentbridge-demo.eu</div>
                   </div>
                 </div>
@@ -320,7 +337,7 @@ export const ContactPage: React.FC = () => {
                 <div className="flex items-start gap-3">
                   <Phone className="w-4 h-4 text-[#345BEF] shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-bold text-white text-sm">Academic Desk</div>
+                    <div className="font-bold text-white text-sm">{t.academicDesk}</div>
                     <div className="text-slate-300 mt-0.5">+31 (0) 20 894 3000 (Mon–Fri CET)</div>
                   </div>
                 </div>
@@ -328,7 +345,7 @@ export const ContactPage: React.FC = () => {
                 <div className="flex items-start gap-3">
                   <Clock className="w-4 h-4 text-[#E7F0E8] shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-bold text-white text-sm">Operating Hours</div>
+                    <div className="font-bold text-white text-sm">{t.hours}</div>
                     <div className="text-slate-300 mt-0.5">08:00 – 21:00 CET / 07:00 – 20:00 GMT</div>
                   </div>
                 </div>
@@ -340,17 +357,19 @@ export const ContactPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-[#345BEF]" />
                 <h4 className="font-serif font-bold text-base text-[#18243A]">
-                  Looking for a trial lesson instead?
+                  {language === 'ru' ? 'Ищете запись на пробный урок?' : 'Looking for a trial lesson instead?'}
                 </h4>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Skip the generic inquiry and book a 1-on-1 diagnostic lesson directly into an academic coach's schedule.
+                {language === 'ru'
+                  ? 'Запишитесь на 30-минутный диагностический урок напрямую с академическим наставником.'
+                  : 'Skip the generic inquiry and book a 1-on-1 diagnostic lesson directly into an academic coach\'s schedule.'}
               </p>
               <Link
                 to="/book-trial"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-[#345BEF] hover:underline pt-1"
               >
-                <span>Go to Trial Lesson Booking</span>
+                <span>{language === 'ru' ? 'Перейти к бронированию урока' : 'Go to Trial Lesson Booking'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>

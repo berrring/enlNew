@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Clock, Users, ArrowRight, CheckCircle2 } from 'lucide-react';
 import type { Course } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface CourseCardProps {
   course: Course;
@@ -9,6 +10,9 @@ interface CourseCardProps {
 }
 
 export const CourseCard: React.FC<CourseCardProps> = ({ course, featuredLayout = false }) => {
+  const { language } = useLanguage();
+  const isRu = language === 'ru';
+
   return (
     <article
       className={`group bg-white rounded-3xl border border-[#18243A]/10 overflow-hidden card-hover-lift flex flex-col justify-between ${
@@ -33,7 +37,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, featuredLayout =
             </span>
             {course.popular && (
               <span className="editorial-badge bg-[#F4C96B] text-[#18243A] shadow-xs">
-                Popular in EU
+                {isRu ? 'Популярно в ЕС' : 'Popular in EU'}
               </span>
             )}
           </div>
@@ -41,7 +45,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, featuredLayout =
           {/* Level Overlay at Bottom of Image */}
           <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white text-xs">
             <span className="bg-[#18243A]/80 backdrop-blur-md px-3 py-1 rounded-full font-medium border border-white/10">
-              Target Level: <strong className="text-[#F4C96B]">{course.level}</strong>
+              {isRu ? 'Уровень: ' : 'Target Level: '}<strong className="text-[#F4C96B]">{course.level}</strong>
             </span>
             <span className="bg-[#345BEF] text-white px-3 py-1 rounded-full font-semibold text-[11px] shadow-xs">
               {course.duration}
@@ -91,13 +95,13 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, featuredLayout =
         <div className="pt-4 flex items-center justify-between gap-4">
           <div>
             <span className="text-[10px] uppercase tracking-wider text-[#516382] font-bold block">
-              Tuition (Indicative)
+              {isRu ? 'Стоимость обучения' : 'Tuition (Indicative)'}
             </span>
             <div className="flex items-baseline gap-1">
               <span className="text-2xl font-bold font-serif text-[#18243A]">
                 €{course.indicativePrice}
               </span>
-              <span className="text-xs text-[#516382]">/ month</span>
+              <span className="text-xs text-[#516382]">/ {isRu ? 'мес' : 'month'}</span>
             </div>
           </div>
 
@@ -105,7 +109,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, featuredLayout =
             to={`/courses/${course.slug}`}
             className="inline-flex items-center gap-1.5 bg-[#FAF8F5] hover:bg-[#18243A] text-[#18243A] hover:text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all border border-[#18243A]/10 hover:border-[#18243A] group/btn shadow-2xs"
           >
-            <span>View Syllabus</span>
+            <span>{isRu ? 'Смотреть курс' : 'View Syllabus'}</span>
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1" />
           </Link>
         </div>

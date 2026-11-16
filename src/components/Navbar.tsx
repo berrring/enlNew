@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Menu, X, ArrowRight, Sparkles, Clock, Compass } from 'lucide-react';
 import { Logo } from './Logo';
+import { useLanguage } from '../context/LanguageContext';
+import { getTranslations } from '../data/translations';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { language, setLanguage } = useLanguage();
+  const t = getTranslations(language);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -32,11 +36,11 @@ export const Navbar: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Courses', path: '/courses' },
-    { name: 'Teachers', path: '/teachers' },
-    { name: 'Pricing', path: '/pricing' },
-    { name: 'About Us', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: t.nav.courses, path: '/courses' },
+    { name: t.nav.teachers, path: '/teachers' },
+    { name: t.nav.pricing, path: '/pricing' },
+    { name: t.nav.about, path: '/about' },
+    { name: t.nav.contact, path: '/contact' },
   ];
 
   return (
@@ -56,10 +60,10 @@ export const Navbar: React.FC = () => {
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2" aria-label="Main Navigation">
             {navLinks.map((link) => (
               <NavLink
-                key={link.name}
+                key={link.path}
                 to={link.path}
                 className={({ isActive }) =>
-                  `px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 relative ${
+                  `px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 relative ${
                     isActive
                       ? 'text-[#18243A] font-semibold bg-[#18243A]/6'
                       : 'text-[#516382] hover:text-[#18243A] hover:bg-[#18243A]/4'
@@ -74,7 +78,7 @@ export const Navbar: React.FC = () => {
             <NavLink
               to="/quiz"
               className={({ isActive }) =>
-                `ml-2 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all border ${
+                `ml-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all border ${
                   isActive
                     ? 'bg-[#E7F0E8] text-[#2F5238] border-[#2F5238]/30 shadow-xs'
                     : 'bg-[#FAF8F5] text-[#18243A] border-[#18243A]/15 hover:border-[#345BEF] hover:text-[#345BEF]'
@@ -82,39 +86,94 @@ export const Navbar: React.FC = () => {
               }
             >
               <Compass className="w-3.5 h-3.5 text-[#345BEF]" />
-              <span>Test Your Level</span>
+              <span>{t.nav.testLevel}</span>
               <span className="bg-[#345BEF] text-white text-[9px] px-1.5 py-0.2 rounded-full font-bold">5m</span>
             </NavLink>
           </nav>
 
-          {/* Desktop Action CTAs */}
+          {/* Desktop Action CTAs & Language Switcher */}
           <div className="hidden lg:flex items-center gap-3">
+            {/* Language Switcher */}
+            <div className="flex items-center rounded-full bg-[#18243A]/6 p-0.5 border border-[#18243A]/10 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                className={`px-2.5 py-1 rounded-full transition-all ${
+                  language === 'en'
+                    ? 'bg-white text-[#18243A] shadow-2xs font-bold'
+                    : 'text-[#516382] hover:text-[#18243A]'
+                }`}
+                aria-label="Switch to English"
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('ru')}
+                className={`px-2.5 py-1 rounded-full transition-all ${
+                  language === 'ru'
+                    ? 'bg-white text-[#18243A] shadow-2xs font-bold'
+                    : 'text-[#516382] hover:text-[#18243A]'
+                }`}
+                aria-label="Переключить на русский язык"
+              >
+                RU
+              </button>
+            </div>
+
             <div className="text-right pr-2 hidden xl:block">
               <span className="text-[10px] uppercase font-bold tracking-wider text-[#516382] block">
-                Timezone Sync
+                {t.nav.timezoneSync}
               </span>
               <span className="text-xs font-semibold text-[#18243A] flex items-center gap-1">
-                <Clock className="w-3 h-3 text-[#345BEF]" /> CET / GMT
+                <Clock className="w-3 h-3 text-[#345BEF]" /> {t.nav.timezones}
               </span>
             </div>
 
             <Link
               to="/book-trial"
-              className="inline-flex items-center gap-2 bg-[#18243A] text-white hover:bg-[#345BEF] px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow group"
+              className="inline-flex items-center gap-2 bg-[#18243A] text-white hover:bg-[#345BEF] px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow group"
             >
-              <span>Book a Free Trial</span>
+              <span>{t.nav.bookTrial}</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Controls */}
           <div className="flex items-center gap-2 lg:hidden">
+            {/* Mobile Language Switcher */}
+            <div className="flex items-center rounded-full bg-[#18243A]/6 p-0.5 border border-[#18243A]/10 text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                className={`px-2 py-1 rounded-full transition-all ${
+                  language === 'en'
+                    ? 'bg-white text-[#18243A] shadow-2xs font-bold'
+                    : 'text-[#516382]'
+                }`}
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('ru')}
+                className={`px-2 py-1 rounded-full transition-all ${
+                  language === 'ru'
+                    ? 'bg-white text-[#18243A] shadow-2xs font-bold'
+                    : 'text-[#516382]'
+                }`}
+              >
+                RU
+              </button>
+            </div>
+
             <Link
               to="/book-trial"
-              className="inline-flex items-center text-xs font-semibold bg-[#18243A] text-white px-3 py-1.5 rounded-lg"
+              className="inline-flex items-center text-xs font-semibold bg-[#18243A] text-white px-2.5 py-1.5 rounded-lg"
             >
-              Free Trial
+              {language === 'ru' ? 'Урок' : 'Trial'}
             </Link>
+
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               type="button"
@@ -135,7 +194,7 @@ export const Navbar: React.FC = () => {
             <div className="flex flex-col space-y-1 border-b border-[#18243A]/10 pb-4">
               {navLinks.map((link) => (
                 <NavLink
-                  key={link.name}
+                  key={link.path}
                   to={link.path}
                   className={({ isActive }) =>
                     `px-4 py-3 rounded-xl text-base font-medium transition-colors ${
@@ -160,8 +219,8 @@ export const Navbar: React.FC = () => {
                   <Sparkles className="w-5 h-5 text-[#345BEF]" />
                 </div>
                 <div>
-                  <div className="font-semibold text-sm">Free English Level Quiz</div>
-                  <div className="text-xs text-[#516382]">Diagnostic CEFR assessment in 5 minutes</div>
+                  <div className="font-semibold text-sm">{t.nav.testLevel}</div>
+                  <div className="text-xs text-[#516382]">{t.nav.freeTestDesc}</div>
                 </div>
               </div>
               <ArrowRight className="w-4 h-4 text-[#2F5238]" />
@@ -173,15 +232,15 @@ export const Navbar: React.FC = () => {
                 to="/book-trial"
                 className="w-full flex items-center justify-center gap-2 bg-[#345BEF] hover:bg-[#2646c7] text-white py-3.5 px-4 rounded-xl font-semibold text-base transition-colors shadow-sm"
               >
-                <span>Book a Free Trial Lesson</span>
+                <span>{t.nav.bookTrial}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <div className="flex items-center justify-center gap-4 text-xs text-[#516382] pt-2">
                 <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-[#345BEF]" /> CET / GMT Timetables
+                  <Clock className="w-3.5 h-3.5 text-[#345BEF]" /> {t.nav.timezones}
                 </span>
                 <span>•</span>
-                <span>Small Cohorts (Max 5)</span>
+                <span>{t.nav.smallCohorts}</span>
               </div>
             </div>
           </div>
